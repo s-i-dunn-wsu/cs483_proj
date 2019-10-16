@@ -12,7 +12,12 @@
 \maketitle
 
 \section{Data Set}
+Our data set for this project will be the cards used in trading card game, Magic: The Gathering. The card text will be treated as a document. With nearly 20,000 unique cards in existence, our corpus will be quite large. Along with the document, each tuple will additionally contain other attributes for the card, such as its mana cost and rarity. This data will be scraped from the official database site for the game.
 
-\section{Features}
+\section{Feature: Advanced Search}
+Our first feature will be an advanced search engine. The user will have the option of using the standard search or the advanced search. The standard search will simply return the cards most relevant to the keyword. Advanced search will be more intricate and designed to assist with deck building. Results may be narrowed by color, commander, set, and other card attributes.
+
+\section{Feature: Related Cards}
+Another feature we plan to include is a display of relevant cards. When a card is chosen from the results, it will open a page that contains not only information about the card, but also give a list of links for related cards. We have not fully planned out the correlation of these results, but possibilities include using scraped data from another site that documents commonly used together cards, suggesting other cards in the same set, and suggesting cards with similar traits.
 
 \end{document}
