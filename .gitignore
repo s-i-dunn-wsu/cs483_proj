@@ -102,3 +102,11 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+
+# Ignore latex intermediates:
+*aux
+*fdb_latexmk
+*fls
+*synctex.gz
+*log
