@@ -1,0 +1,19 @@
+# This file specifies the development dependencies of this project
+# but not strictly the runtime dependencies.
+# If a module is necessary to build the dataset, or prep the deliverable
+# in any way, it should be listed here
+
+# To install all dependencies at once, run: 
+# (sudo) python<version> -m pip install -r requirements.txt
+
+# where sudo is applied if necessary, and <version> is used to get
+# the exact python interpreter you wish to install to.
+# if you are using a venv (good for you), the command would look like
+# this (once the venv is activated):
+# python -m pip install -r requirements.txt
+# or
+# pip install -r requirements.txt
+
+whoosh
+beautifulsoup4
+requests
