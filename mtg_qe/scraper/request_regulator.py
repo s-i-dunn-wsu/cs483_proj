@@ -63,7 +63,7 @@ class RequestRegulator(object):
     def _set_default_policies(self):
         """
         """
-        self._delay_time = 3
+        self._delay_time = 1
         self._disallowed = tuple()
 
     def _load_robots_policies(self):
