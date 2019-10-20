@@ -2,6 +2,7 @@
 # CS 483, Fall 2019
 
 import multiprocessing as mp
+import logging
 
 class Agent(object):
     """
