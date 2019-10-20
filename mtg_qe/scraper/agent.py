@@ -58,7 +58,7 @@ class Agent(object):
                 self.fetch_task()
             except Agent.IShouldDie:
                 # No more tasks.
-                print("no more tasks for agent")
+                logging.getLogger('Agent').debug("no more tasks for agent")
                 return
 
             # Start building output for the task.
@@ -66,7 +66,7 @@ class Agent(object):
             for item in self._generate_items():
                 output.append(item)
                 if not self._coordinator.is_open:
-                    print('coordinator closed, terminating early.')
+                    logging.getLogger('Agent').debug('coordinator closed, terminating early.')
                     return # Exit early, some one is probably waiting to join on this thread.
 
             self.task_complete(output)
