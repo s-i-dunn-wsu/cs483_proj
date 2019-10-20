@@ -26,7 +26,9 @@ class SetAgent(Agent):
         self._active_regulator = regulator
         self._current_page = 0
 
-        print(f"Agent prepping to work on set: {self._acitve_set_name}")
+        self._log = logging.getLogger("SetAgent").getChild(set_name)
+
+        self._log.info(f"Agent prepping to work on set: {self._acitve_set_name}")
 
         # Fetch the set's page from gatherer.
         # I'd prefer to use requests.get's params keyword arg to format
@@ -77,8 +79,8 @@ class SetAgent(Agent):
         # Get the list of cards on the first page:
         self._cards_on_page = self.__extract_card_links_from_page(soup, search_url)
 
-        print(f"\tFound: {self._max_page} pages worth of items (~{self._max_page * 100} to {((self._max_page + 1) * 100) - 1} cards)")
-        print(f"\tFound {len(self._cards_on_page)} cards on the first page.")
+        self._log.debug(f"\tFound: {self._max_page} pages worth of items (~{self._max_page * 100} to {((self._max_page + 1) * 100) - 1} cards)")
+        self._log.debug(f"\tFound {len(self._cards_on_page)} cards on the first page.")
         # Aaand we're done for now
         # we'll have to have a compound iteration occurring in _next to
         # allow it to know when to get the next page's worth of content.
@@ -126,7 +128,7 @@ class SetAgent(Agent):
 
     def __extract_card_from_link(self, link):
         # Get the page
-        print(f"Extracting from link: {link}")
+        self._log.info(f"Extracting from link: {link}")
         card_page = bs(self._active_regulator.get(link), features='html.parser')
 
         # Pass over to a card extractor to finish fetching.
