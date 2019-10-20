@@ -4,6 +4,7 @@
 import re
 from bs4 import BeautifulSoup as bs
 from requests.compat import urljoin
+import logging
 
 try:
     from .agent import Agent
