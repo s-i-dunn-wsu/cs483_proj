@@ -8,22 +8,48 @@
 
 class Card(object):
     def __init__(self):
-        pass
+        self._name = None
+        self._type = None
+
+    def serialize(self):
+        """
+        Called when being converted to json for long term storage.
+        MUST return a json serializable object.
+
+        .. note::
+            whatever format this method returns is what will be passed back to
+            calls to deserialize, therefore it may be useful to include a schema
+            version, allowing us to ensure backwards compatibility.
+        """
+        return {
+            "schema": 1,
+            "name": self.name,
+            "mana": self.mana_cost,
+            "cmc": self.cmc,
+            "mana_cost": self.mana_cost,
+            "type": self.type,
+            "subtypes": self.subtypes,
+            "text": self.text,
+            "flavor_text": self.flavor,
+            "power": self.power,
+            "toughness" : self.toughness,
+            "expansions": self.expacs,
+            "arts": self.artworks
+        }
 
     @property
     def name(self):
         """
         Returns the cards name as it is on the card. (case sensitive)
         """
-        pass
+        return self._name
 
     @name.setter
     def name(self, value):
         """
         Sets the cards name to value
         """
-        pass
-
+        self._name = value
 
     @property
     def mana_cost(self):
@@ -51,14 +77,14 @@ class Card(object):
         """
         Returns the cards type (creature, instant, sorc, etc.)
         """
-        pass
+        return self._type
 
     @type.setter
     def type(self, value):
         """
         Sets the cards type (ensure its a valid type)
         """
-        pass
+        self._type = value
 
     @property
     def subtypes(self):
@@ -122,6 +148,23 @@ class Card(object):
         """
         pass
 
+    def set_pt(self, pt):
+        """
+        A quick way to set power and toughness, since
+        they're usually given in one go.
+        """
+        self.power, self.toughness = pt.split('/')
+
+    @property
+    def rarity(self):
+        """
+        """
+
+    @rarity.setter
+    def rarity(self, value):
+        """
+        """
+
     @property
     def expacs(self):
         """
@@ -134,12 +177,32 @@ class Card(object):
         """
 
     @property
+    def set_numbers(self):
+        """
+        Returns the expansion : set number associations.
+        """
+
+    def add_set_number(self, expac, number):
+        """
+        """
+
+    @property
     def artworks(self):
         """
         Returns the artwork(s) this card has. (includes link to image, artist name.)
         """
 
-    def add_artwork(self, artwork):
+    def add_artwork(self, expac, artwork):
         """
         Adds the given artwork to the set of arworks available for this card.
         """
+
+    @property
+    def gatherer_links(self):
+        """
+        Indicates the pages where this card was located
+        on gatherer.wizards.com
+        """
+
+    def add_link(self, link):
+        pass
