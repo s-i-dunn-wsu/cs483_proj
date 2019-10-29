@@ -30,10 +30,11 @@ class RequestRegulator(object):
         href = href.replace(self._domain, '')
         return urljoin(self._domain, href)
 
-    def get(self, href, as_json = False, **kwargs):
+    def get(self, href, as_bytes = False, as_json = False, **kwargs):
         """
         :param str href: the extension to get the url from.
         :param bool as_json: will parse the requested data as json and return the deserialized object.
+        :param bool as_bytes: returns the un-encoded version of the requests response.
         :param kwargs: keyword arguments to pass to requests.get
         :return: The body of the page at the indicated href, None if unable to safely get the page (200 status code), or hte page was disallowed
         """
@@ -53,6 +54,8 @@ class RequestRegulator(object):
         self._last_request_time = time.time()
 
         if r.status_code in range(200, 300):
+            if as_bytes:
+                return r.content
             if as_json:
                 return r.json()
             else:

@@ -4,6 +4,7 @@
 import re
 import os
 import json
+import urllib
 from bs4 import BeautifulSoup as bs
 from requests.compat import urljoin
 import logging
@@ -11,11 +12,13 @@ import logging
 try:
     from .agent import Agent
     from .card_extractor import CardExtractor
-    from ..utils import CardEncoder, normalize_name
+    from ..utils.json_helpers import CardEncoder
+    from ..utils.path_helpers import  normalize_name
 except ImportError:
     from mtg_qe.scraper.agent import Agent
     from mtg_qe.scraper.card_extractor import CardExtractor
-    from mtg_qe.utils import CardEncoder, normalize_name
+    from mtg_qe.utils.json_helpers import CardEncoder
+    from mtg_qe.utils.path_helpers import  normalize_name
 
 class SetAgent(Agent):
     def _prep_for_task(self, set_name, regulator):
@@ -105,16 +108,42 @@ class SetAgent(Agent):
         # and all pages <= max_page.
         while self._current_page <= self._max_page:
             for link in self._cards_on_page:
-                data = self.__extract_card_from_link(link)
+                multiverseid = re.match(r'.*[\?\&]multiverseid=(\d*).*', link).group(1)
 
-                # fill in the multiverse id.
-                data.multiverseid = re.match(r'.*[\?\&]multiverseid=(\d*).*', link).group(1)
+                # Need to generate a conflict-free file name for this card in its respective intermediates folder.
+                # Easiest way to do that is to mimic (with some assurances) the url parameters.
+                query_info = urllib.parse.parse_qs(urllib.parse.urlparse(link).query)
+                f = "_".join([f"{key}_{query_info[key][0] if isinstance(query_info[key], (list, tuple)) else query_info[key]}" for key in sorted(query_info.keys())])
 
-                # save the card in an intermediates file so
-                # we know to skip it if this set gets re-run.
-                with open(os.path.join('intermediates', 'cards', normalize_name(self._acitve_set_name), normalize_name(data.name) + '.json'), 'w') as fd:
-                    json.dump(data, fd, cls=CardEncoder)
-                yield data
+                intermediates_path = os.path.join('intermediates', 'cards', normalize_name(self._acitve_set_name), f + '.json')
+
+                if os.path.exists(intermediates_path) and os.path.isfile(intermediates_path):
+                    # Note: we should alos check the schema, and re-scrape if its stale.
+                    self._log.info(f"Returning cached information for {multiverseid}")
+                    with open(intermediates_path) as fd:
+                        yield json.load(fd)
+
+                else:
+                    data = self.__extract_card_from_link(link, multiverseid)
+
+                    # save the card in an intermediates file so
+                    # we know to skip it if this set gets re-run.
+                    with open(intermediates_path, 'w') as fd:
+                        json.dump(data, fd, cls=CardEncoder)
+
+                    # And the last order of business:
+                    # download and save the image for this card.
+
+                    try:
+                        os.makedirs(data.artwork_folder)
+                    except OSError:
+                        pass # folder exists.
+
+                    with open(data.local_artwork, 'wb') as fd:
+                        img_data = self._active_regulator.get(data.external_artwork, as_bytes = True)
+                        fd.write(img_data)
+
+                    yield data
 
             self._current_page += 1
             if self._current_page <= self._max_page:
@@ -148,10 +177,10 @@ class SetAgent(Agent):
     def __get_search_page_href(self, set_name, page=0):
         return f"/Pages/Search/Default.aspx?page={page}&set=[\"{self._acitve_set_name.replace(' ', '+')}\"]"
 
-    def __extract_card_from_link(self, link):
+    def __extract_card_from_link(self, link, multiverseid):
         # Get the page
         self._log.info(f"Extracting from link: {link}")
         card_page = bs(self._active_regulator.get(link), features='html.parser')
 
         # Pass over to a card extractor to finish fetching.
-        return CardExtractor(link, card_page).extract()
+        return CardExtractor(link, card_page, multiverseid).extract()

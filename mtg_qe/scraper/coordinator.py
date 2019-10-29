@@ -17,13 +17,15 @@ import os
 try:
     from .request_regulator import RequestRegulator
     from ..model.card import Card
-    from ..utils import CardEncoder, normalize_name
+    from ..utils.json_helpers import CardEncoder
+    from ..utils.path_helpers import  normalize_name
 
 except ImportError:
     # hopefully we don't tear module... :shrug:
     from mtg_qe.scraper.request_regulator import RequestRegulator
     from mtg_qe.model.card import Card
-    from mtg_qe.utils import CardEncoder, normalize_name
+    from mtg_qe.utils.json_helpers import CardEncoder
+    from mtg_qe.utils.path_helpers import  normalize_name
 
 class Coordinator(object):
     task_incomplete = object() # identity used to signal that an agent was unable to complete a task.
