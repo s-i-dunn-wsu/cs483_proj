@@ -39,6 +39,11 @@ class CardExtractor(object):
         self._page_soup = page_soup
         self._soup = page_soup.find('td', 'rightCol')
 
+        # Figure out our content IDs.
+        # Pages will typically have a JS section wherein it defines all
+        # the IDs (function ClientIDs() {}; ClientIDs.nameRow='...' kind
+        # of stuff.)
+
     def extract(self):
         """
         Extracts the card information from the card's page and

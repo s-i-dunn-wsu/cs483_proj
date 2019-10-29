@@ -17,13 +17,17 @@ import os
 try:
     from .request_regulator import RequestRegulator
     from ..model.card import Card
+    from ..utils import CardEncoder, normalize_name
 
 except ImportError:
     # hopefully we don't tear module... :shrug:
     from mtg_qe.scraper.request_regulator import RequestRegulator
     from mtg_qe.model.card import Card
+    from mtg_qe.utils import CardEncoder, normalize_name
 
 class Coordinator(object):
+    task_incomplete = object() # identity used to signal that an agent was unable to complete a task.
+
     def __init__(self, num_threads = 2):
         # Create the request regulators.
         # The initializing work will just use regulator 0.
@@ -61,6 +65,7 @@ class Coordinator(object):
                 pass
 
             os.mkdir(os.path.join('.', 'intermediates', 'sets'))
+            os.mkdir(os.path.join('.', 'intermediates', 'cards'))
 
         elif not os.path.isdir(intermediates):
             self._log.error(f"The intermediate storage path {intermediates} is blocked by a file in that location! Please remove it and try again.")
@@ -107,17 +112,11 @@ class Coordinator(object):
         # Dump ata to an intermediate file. data is presumably a dictionary or list of some kind
         # containing model.Card objects.
         # Since we don't (yet) know the exact layout, let's use a custom json encoder.
-        class CardEncoder(json.JSONEncoder):
-            def default(self, obj):
-                if isinstance(obj, Card):
-                    return obj.serialize()
-                # if its not a card, treat it normally
-                return json.JSONEncoder.default(self, obj)
+        if data is not Coordinator.task_incomplete:
+            self._completed.append(set_name)
 
-        self._completed.append(set_name)
-
-        with open(os.path.join(self._intermediates_path, f"{set_name.replace(' ', '_')}_mtg_set.json"), 'w', encoding='utf-8') as fd:
-            json.dump(data, fd, cls=CardEncoder)
+            with open(os.path.join(self._intermediates_path, normalize_name(set_name) + "_mtg_set.json"), 'w', encoding='utf-8') as fd:
+                json.dump(data, fd, cls=CardEncoder)
 
         # Lastly, free the regulator.
         if regulator in self._regulators:

@@ -4,6 +4,11 @@
 import multiprocessing as mp
 import logging
 
+try:
+    from .coordinator import Coordinator
+except ImportError:
+    from mtg_qe.scraper.coordinator import Coordinator
+
 class Agent(object):
     """
     An agent works with the Coordinator to fulfill tasks.
@@ -47,6 +52,13 @@ class Agent(object):
         args = list(self.__task) + [output]
         self._coordinator.task_complete(*args)
 
+    def task_incomplete(self):
+        """
+        Signals the coordinator that this task was not completed, for some reason.
+        """
+        args = list(self.__task) + [Coordinator.task_incomplete]
+
+
     def _thread_function(self):
         """
         This function is the main function of the Agent's thread.
@@ -64,13 +76,20 @@ class Agent(object):
 
             # Start building output for the task.
             output = []
-            for item in self._generate_items():
-                output.append(item)
-                if not self._coordinator.is_open:
-                    logging.getLogger('Agent').debug('coordinator closed, terminating early.')
-                    return # Exit early, some one is probably waiting to join on this thread.
+            try:
+                for item in self._generate_items():
+                    output.append(item)
+                    if not self._coordinator.is_open:
+                        logging.getLogger('Agent').debug('coordinator closed, terminating early.')
+                        return # Exit early, some one is probably waiting to join on this thread.
 
-            self.task_complete(output)
+            except Exception as e:
+                logging.getLogger("Agent").error("Caught an error in subclass hook.")
+                logging.getLogger("Agent").error(e, exc_info=True)
+                output = Coordinator.task_incomplete
+
+            finally:
+                self.task_complete(output)
 
     def _prep_for_task(self, *args):
         """

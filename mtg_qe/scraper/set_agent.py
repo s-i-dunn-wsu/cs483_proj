@@ -2,6 +2,8 @@
 # CS 483, Fall 2019
 
 import re
+import os
+import json
 from bs4 import BeautifulSoup as bs
 from requests.compat import urljoin
 import logging
@@ -9,9 +11,11 @@ import logging
 try:
     from .agent import Agent
     from .card_extractor import CardExtractor
+    from ..utils import CardEncoder, normalize_name
 except ImportError:
     from mtg_qe.scraper.agent import Agent
     from mtg_qe.scraper.card_extractor import CardExtractor
+    from mtg_qe.utils import CardEncoder, normalize_name
 
 class SetAgent(Agent):
     def _prep_for_task(self, set_name, regulator):
@@ -26,6 +30,14 @@ class SetAgent(Agent):
         self._acitve_set_name = set_name
         self._active_regulator = regulator
         self._current_page = 0
+
+        # Conveniently, Coordinator makes sure ./intermediates/cards exists
+        # so we just need to make interemdiates/cards/{set_name} to store
+        # single cards in.
+        try:
+            os.mkdir(os.path.join('intermediates', 'cards', normalize_name(set_name)))
+        except OSError:
+            pass
 
         self._log = logging.getLogger("SetAgent").getChild(set_name)
 
@@ -93,7 +105,16 @@ class SetAgent(Agent):
         # and all pages <= max_page.
         while self._current_page <= self._max_page:
             for link in self._cards_on_page:
-                yield self.__extract_card_from_link(link)
+                data = self.__extract_card_from_link(link)
+
+                # fill in the multiverse id.
+                data.multiverseid = re.match(r'.*[\?\&]multiverseid=(\d*).*', link).group(1)
+
+                # save the card in an intermediates file so
+                # we know to skip it if this set gets re-run.
+                with open(os.path.join('intermediates', 'cards', normalize_name(self._acitve_set_name), normalize_name(data.name) + '.json'), 'w') as fd:
+                    json.dump(data, fd, cls=CardEncoder)
+                yield data
 
             self._current_page += 1
             if self._current_page <= self._max_page:

@@ -34,8 +34,21 @@ class Card(object):
             "power": self.power,
             "toughness" : self.toughness,
             "expansions": self.expacs,
-            "arts": self.artworks
+            "arts": self.artworks,
+            "multiverseid": self.multiverseid
         }
+    @property
+    def multiverseid(self):
+        """
+        indicates the card's multiverse id.
+        """
+        return self._multiverseid
+
+    @multiverseid.setter
+    def multiverseid(self, value):
+        """
+        """
+        self._multiverseid = int(value)
 
     @property
     def name(self):
