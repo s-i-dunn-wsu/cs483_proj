@@ -124,26 +124,30 @@ class SetAgent(Agent):
                         yield json.load(fd)
 
                 else:
-                    data = self.__extract_card_from_link(link, multiverseid)
+                    card = self.__extract_card_from_link(link, multiverseid)
+
+                    # Some information we want is located on a different page altogether, so we
+                    # need to go there now and retrieve it.
+                    card.other_prints, card.legal_formats = self.__extract_format_info_from_link(link)
 
                     # save the card in an intermediates file so
                     # we know to skip it if this set gets re-run.
                     with open(intermediates_path, 'w') as fd:
-                        json.dump(data, fd, cls=CardEncoder)
+                        json.dump(card, fd, cls=CardEncoder)
 
                     # And the last order of business:
                     # download and save the image for this card.
 
                     try:
-                        os.makedirs(data.artwork_folder)
+                        os.makedirs(card.artwork_folder)
                     except OSError:
                         pass # folder exists.
 
-                    with open(data.local_artwork, 'wb') as fd:
-                        img_data = self._active_regulator.get(data.external_artwork, as_bytes = True)
+                    with open(card.local_artwork, 'wb') as fd:
+                        img_data = self._active_regulator.get(card.external_artwork, as_bytes = True)
                         fd.write(img_data)
 
-                    yield data
+                    yield card
 
             self._current_page += 1
             if self._current_page <= self._max_page:
@@ -184,3 +188,43 @@ class SetAgent(Agent):
 
         # Pass over to a card extractor to finish fetching.
         return CardExtractor(link, card_page, multiverseid).extract()
+
+    def __extract_format_info_from_link(self, link):
+        """
+        Takes a card object with information already pulled from its Details page and
+        adds the information on its Printings page.
+        """
+        link = link.replace("Details", "Printings")
+        soup = bs(self._active_regulator.get(link), features='html.parser')
+
+
+        def extract_all_col_values(table, col_header):
+            c = 0
+            header = table.find('tr', class_='headerRow')
+            for col in header.children:
+                span = col.find('span')
+                if span and span != -1 and span.getText().strip() == col_header:
+                    break
+                c += 1
+
+            # now we know which column to pull values from in the non-header rows.
+            l = []
+            for row in table.find_all('tr', class_='cardItem'):
+                children = [x for x in row.children] # the row.children property is an iterable, but not subscriptable (which is what we need)
+                l.append(children[c].getText().strip())
+
+            return l
+
+        # there are two tables on this page with the class='cardList', the first
+        # contains entries of other printings
+        # the latter contains format legality.
+        tables = soup.find_all('table', class_='cardList')
+        if len(tables) != 2:
+            raise RuntimeError(f"Card's format page is unrecognized! (multiverseid={card.multiverseid})")
+
+        printing_sets = extract_all_col_values(tables[0], 'Set')
+        formats = extract_all_col_values(tables[1], 'Format')
+        legality = extract_all_col_values(tables[1], 'Legality')
+        legal_formats = [x[0] for x in zip(formats, legality) if x[1].lower() == 'legal']
+
+        return printing_sets, legal_formats

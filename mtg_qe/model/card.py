@@ -18,10 +18,18 @@ class Card(object):
     def __init__(self):
         self._artist = None
         self._name = None
+        self._mana = None
+        self._cmc = None
         self._type = None
+        self._subtypes = None
+        self._rarity = None
         self._expansion = None
         self._set_number = None
+        self._rules_text = None
+        self._flavor_text = None
+        self._pt = None
         self._printings = []
+        self._legal_in = []
         self._external_link = None
         self._external_img_link = None
 
@@ -38,9 +46,9 @@ class Card(object):
         return {
             "schema": 1,
             "name": self.name,
+            "rarity": self.rarity,
             "mana": self.mana_cost,
             "cmc": self.cmc,
-            "mana_cost": self.mana_cost,
             "type": self.type,
             "subtypes": self.subtypes,
             "text": self.text,
@@ -48,7 +56,9 @@ class Card(object):
             "power": self.power,
             "toughness" : self.toughness,
             "expansion": self.expansion,
+            "printings": self.other_prints,
             "set_number": self.set_number,
+            "formats" : self.legal_formats,
             "artwork_external" : self.external_artwork,
             "artwork_internal" : self.local_artwork,
             "multiverseid": self.multiverseid
@@ -86,19 +96,31 @@ class Card(object):
         """
         Returns the ManaCost of a card.
         """
-        pass
+        return tuple(self._mana)
 
     @mana_cost.setter
     def mana_cost(self, value):
         """
         Sets the mana cost of the card (convert to the appropriate class as necessaary)
         """
+        self._mana = value[:]
 
     @property
     def cmc(self):
         """
         Returns the converted mana cost of the card.
         """
+        if self._cmc is None:
+            l = []
+            for x in self.mana_cost:
+                try:
+                    l.append(int(x))
+                except Exception:
+                    l.append(1)
+
+            self._cmc = sum(l)
+
+        return self._cmc
 
     # no setter for cmc, its calculated from mana_cost
 
@@ -114,7 +136,11 @@ class Card(object):
         """
         Sets the cards type (ensure its a valid type)
         """
-        self._type = value
+        # value will be <type(s)> [\u2014 <subtypes>]
+        split = value.split('\u2014')
+        self._type = split[0].strip()
+        if len(split) > 1:
+            self._subtypes = split[1].strip()
 
     @property
     def subtypes(self):
@@ -122,78 +148,77 @@ class Card(object):
         Returns the cards subtypes, if any.
         None otherwise.
         """
-        pass
+        return self._subtypes
 
     @property
     def text(self):
         """
         Returns the text on the card. (the most common 'doc' of a card.)
         """
-        pass
+        return self._rules_text
 
     @text.setter
     def text(self, value):
         """
         Sets the cards text
         """
-        pass
+        self._rules_text = value
 
     @property
     def flavor(self):
         """
         Returns this cards flavor text.
         """
-        pass
+        return self._flavor_text
 
     @flavor.setter
     def flavor(self, value):
         """
         Sets the cards flavor text
         """
+        self._flavor_text = value
 
     @property
     def power(self):
         """
         If this card is a creature, return its power.
         """
-        pass
-
-    @power.setter
-    def power(self, value):
-        """
-        Sets this cards power. (check to make sure its valid.)
-        """
-        pass
+        # can't convert to int, may be '*'
+        if self._pt:
+            return self._pt.split('/')[0].strip()
 
     @property
     def toughness(self):
         """
         If this card is a creature, return its toughness.
         """
-        pass
+        if self._pt:
+            return self._pt.split('/')[1].strip()
 
-    @toughness.setter
-    def toughness(self, value):
+    @property
+    def p_t(self):
         """
         """
-        pass
+        return self._pt
 
-    def set_pt(self, pt):
+    @p_t.setter
+    def p_t(self, value):
         """
-        A quick way to set power and toughness, since
-        they're usually given in one go.
         """
-        self.power, self.toughness = pt.split('/')
+        self._pt = value
+
 
     @property
     def rarity(self):
         """
         """
+        return self._rarity
 
     @rarity.setter
     def rarity(self, value):
         """
         """
+        self._rarity = value
 
     @property
     def expansion(self):
@@ -226,11 +251,9 @@ class Card(object):
         """
         return tuple(self._printings)
 
-    def add_printing(self, expac):
-        """
-        Adds the given expac to this cards other_prints list.
-        """
-        self._printings.append(expac)
+    @other_prints.setter
+    def other_prints(self, value):
+        self._printings = value[:]
 
     @property
     def artwork_folder(self):
@@ -273,7 +296,16 @@ class Card(object):
             else:
                 raise ValueError(f"Given relative link! ({link})")
 
-        self._external_img_link = link
+        else:
+            self._external_img_link = link
+
+    @property
+    def legal_formats(self):
+        return tuple(self._legal_in)
+
+    @legal_formats.setter
+    def legal_formats(self, value):
+        self._legal_in = value[:]
 
     @property
     def gatherer_link(self):

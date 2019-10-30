@@ -24,5 +24,7 @@ def join_urls(base, url):
 
     # now join the two path components and tack b's query parameters back on
     ret = urllib.parse.urljoin(a.path, b.path)
-    ret += b.query
+    if b.query:
+        ret += '?' + b.query
+
     return ret

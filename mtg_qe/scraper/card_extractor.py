@@ -60,6 +60,10 @@ class CardExtractor(object):
                 else:
                     raise
 
+        def extract_mana(sub_soup):
+            return [x['alt'] for x in sub_soup.children if not isinstance(x, str)]
+
+
         card = Card()
 
         card.gatherer_link = self._link
@@ -69,10 +73,10 @@ class CardExtractor(object):
         card.type = extract_text(ContentRowIds.Type, False)
 
         if not 'land' in card.type.lower():
-            card.mana_cost = extract_text(ContentRowIds.Mana) # Card handles converting to Mana objects.
+            card.mana_cost = extract_mana(self._page_soup.find('div', id=ContentRowIds.Mana).find('div', class_='value'))
 
         if 'creature' in card.type.lower():
-            card.set_pt(extract_text(ContentRowIds.PT))
+            card.p_t = extract_text(ContentRowIds.PT)
 
         card.text = extract_text(ContentRowIds.Text)
         card.flavor = extract_text(ContentRowIds.Flavor)
