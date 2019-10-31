@@ -242,7 +242,8 @@ class Card(object):
 
     @set_number.setter
     def set_number(self, value):
-        self._set_number = int(value)
+        if value is not None:
+            self._set_number = int(value)
 
     @property
     def other_prints(self):
