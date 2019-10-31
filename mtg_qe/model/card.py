@@ -110,6 +110,9 @@ class Card(object):
         """
         Returns the converted mana cost of the card.
         """
+        if not self.mana_cost:
+            return 0
+
         if self._cmc is None:
             l = []
             for x in self.mana_cost:
