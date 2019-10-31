@@ -102,20 +102,20 @@ class CardExtractor(object):
 
         card.gatherer_link = self._link
         card.multiverseid = self._multiverseid
-        card.external_artwork = self._page_soup.find('img', id='ctl00_ctl00_ctl00_MainContent_SubContent_SubContent_cardImage')['src']
+        card.external_artwork = self._page_soup.find('img', id=self.identify_id('cardImage'))['src']
         card.name = extract_text(self.identify_id('nameRow'), False)
-        card.type = extract_text(ContentRowIds.Type, False)
+        card.type = extract_text(self.identify_id('typeRow'), False)
 
         if not 'land' in card.type.lower():
-            card.mana_cost = extract_mana(self._page_soup.find('div', id=ContentRowIds.Mana).find('div', class_='value'))
+            card.mana_cost = extract_mana(self._page_soup.find('div', id=self.identify_id('manaRow')).find('div', class_='value'))
 
         if 'creature' in card.type.lower():
-            card.p_t = extract_text(ContentRowIds.PT)
+            card.p_t = extract_text(self.identify_id('ptRow'))
 
-        card.text = extract_text(ContentRowIds.Text)
-        card.flavor = extract_text(ContentRowIds.Flavor)
-        card.rarity = extract_text(ContentRowIds.Rarity, False)
-        card.expansion = extract_text(ContentRowIds.Expac, False)
-        card.set_number = extract_text(ContentRowIds.Number)
+        card.text = extract_text(self.identify_id('textRow'))
+        card.flavor = extract_text(self.identify_id('flavorRow'))
+        card.rarity = extract_text(self.identify_id('rarityRow'), False)
+        card.expansion = extract_text(self.identify_id('setRow'), False)
+        card.set_number = extract_text(self.identify_id('numberRow'))
 
         return card
