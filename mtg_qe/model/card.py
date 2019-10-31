@@ -96,7 +96,7 @@ class Card(object):
         """
         Returns the ManaCost of a card.
         """
-        return tuple(self._mana)
+        return None if self._mana is None else tuple(self._mana)
 
     @mana_cost.setter
     def mana_cost(self, value):
