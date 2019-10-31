@@ -42,7 +42,8 @@ contentIdDefaults = {
     'flavorRow': ContentRowIds.Flavor,
     'rarityRow': ContentRowIds.Rarity,
     'numberRow': ContentRowIds.Number,
-    'artistRow': ContentRowIds.Artist
+    'artistRow': ContentRowIds.Artist,
+    'cardImage': "ctl00_ctl00_ctl00_MainContent_SubContent_SubContent_ctl00_cardImage"
 }
 
 class CardExtractor(object):
