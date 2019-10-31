@@ -116,14 +116,19 @@ class SetAgent(Agent):
                 f = "_".join([f"{key}_{query_info[key][0] if isinstance(query_info[key], (list, tuple)) else query_info[key]}" for key in sorted(query_info.keys())])
 
                 intermediates_path = os.path.join('intermediates', 'cards', normalize_name(self._acitve_set_name), f + '.json')
-
+                do_extract = True
                 if os.path.exists(intermediates_path) and os.path.isfile(intermediates_path):
                     # Note: we should alos check the schema, and re-scrape if its stale.
                     self._log.info(f"Returning cached information for {multiverseid}")
-                    with open(intermediates_path) as fd:
-                        yield json.load(fd)
+                    try:
+                        with open(intermediates_path) as fd:
+                            yield json.load(fd)
+                            do_extract = False
+                    except json.JSONDecodeError:
+                        # Remove corrupted file and  continue on to extraction
+                        os.remove(intermediates_path)
 
-                else:
+                elif do_extract:
                     card = self.__extract_card_from_link(link, multiverseid)
 
                     # Some information we want is located on a different page altogether, so we
