@@ -74,10 +74,10 @@ class CardExtractor(object):
         identify_id('nameRow') will find the id:
         'ctl00_ctl00_ctl00_MainContent_SubContent_SubContent_nameRow' on *most* pages.
         """
-        rs = r'ClientIDs.{}\s*=\s*[\'"](.*)[\'"]'.format(str_id)
+        rs = r'ClientIDs.{}\s*=\s*[\'"](.*)[\'"];*'.format(str_id)
         m = re.match(rs, str(self._page_soup))
         if m:
-            return m.group(1)
+            return m.group(1).strip()
         else:
             return contentIdDefaults[str_id]
 
