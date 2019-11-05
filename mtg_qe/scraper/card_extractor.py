@@ -91,9 +91,7 @@ class CardExtractor(object):
             try:
                 return self._soup.find('div', id=id).find('div', class_='value').getText().strip()
             except Exception:
-                if may_be_empty:
-                    pass
-                else:
+                if not may_be_empty:
                     raise
 
         def extract_mana(sub_soup):
@@ -107,8 +105,13 @@ class CardExtractor(object):
         card.name = extract_text(self.identify_id('nameRow'), False)
         card.type = extract_text(self.identify_id('typeRow'), False)
 
-        if not 'land' in card.type.lower():
-            card.mana_cost = extract_mana(self._page_soup.find('div', id=self.identify_id('manaRow')).find('div', class_='value'))
+        if not 'land' in card.type.lower(): # No land has mana cost, AFAIK
+            # Some cards still may not have a mana cost though
+            # so we need to be careful here.
+            try:
+                card.mana_cost = extract_mana(self._page_soup.find('div', id=self.identify_id('manaRow')).find('div', class_='value'))
+            except AttributeError:
+                pass
 
         if 'creature' in card.type.lower():
             card.p_t = extract_text(self.identify_id('ptRow'))
