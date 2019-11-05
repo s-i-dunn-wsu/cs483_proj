@@ -101,8 +101,8 @@ class CardExtractor(object):
 
         card.gatherer_link = self._link
         card.multiverseid = self._multiverseid
-        card.external_artwork = self._page_soup.find('img', id=self.identify_id('cardImage'))['src']
         card.name = extract_text(self.identify_id('nameRow'), False)
+        self._extract_image_href(card)
         card.type = extract_text(self.identify_id('typeRow'), False)
 
         if not 'land' in card.type.lower(): # No land has mana cost, AFAIK
@@ -123,3 +123,24 @@ class CardExtractor(object):
         card.set_number = extract_text(self.identify_id('numberRow'))
 
         return card
+
+    def _extract_image_href(self, card):
+        """
+        finds the image link within self._page_soup.
+        Must be called after the card's name is fetched.
+        """
+        # Iterate through all <img> tags, looking for one
+        # where the 'alt' field matches card.name.
+        # Fall back to trying to identify the cardImage ID and finding that
+        img_tags = self._page_soup.find_all('img')
+
+        for img in img_tags:
+            try:
+                if img['alt'].strip().lower() == card.name.strip().lower():
+                    card.external_artwork = img['src']
+                    return
+            except Exception:
+                continue
+
+        # if we got here then we need to rely on the fall back strat.
+        card.external_artwork = self._page_soup.find('img', id=self.identify_id('cardImage'))['src']
