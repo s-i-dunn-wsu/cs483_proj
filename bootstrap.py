@@ -2,10 +2,15 @@
 
 import sys
 import logging
+import time
 from mtg_qe.scraper.coordinator import *
 from mtg_qe.scraper.set_agent import *
 
-logging.basicConfig(level=logging.INFO)
+stime = time.strftime("%a%d%m%Y-%H%M")
+logging.basicConfig(level=logging.INFO, filename=f'scrape_{stime}.log')
+
+# Uncomment to print logging info to stdout.
+# logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
 
 if __name__ == "__main__":
 	try:
