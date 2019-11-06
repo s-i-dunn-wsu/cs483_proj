@@ -7,7 +7,8 @@ body {
 h1 {
     font-family: "Beleren Bold";
 }
-h3 {
+h2 {
+    font-family: "Beleren Bold";
     text-align: left;
 }
 input.searchbar {
@@ -16,9 +17,6 @@ input.searchbar {
 table {
     border-spacing: 10px;
     width: 75%;
-}
-img {
-    height: 175px;
 }
 div.results {
     text-align: left;

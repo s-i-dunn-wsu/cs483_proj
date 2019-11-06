@@ -1,8 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
+<link rel="stylesheet" type="text/css" href="styles/cardinfo.css">
+<style>
+@font-face {
+    font-family: "Beleren Bold";
+    src:url("fonts/BELEREN-BOLD.woff") format("woff");
+}
+</style>
 </head>
 <body>
-Info for {{ id }}
+<h1><a href="/">Magic: The Gathering Card Search</a></h1>
+<div class="results">
+<table align="center">
+<col width="250">
+<tr>
+<th colspan="2"><h2>Information</h2></th>
+</tr>
+<tr>
+<td><img src="images/{{ carddata[2] }}"></td>
+<td valign="top">
+<b>Card Name:</b> {{ carddata[0] }}<br/><br/>
+<b>Card Text:</b> {{ carddata[1] }}<br/>
+</td>
+</tr>
+</table>
+</div>
 </body>
 </html>

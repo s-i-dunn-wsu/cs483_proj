@@ -10,9 +10,11 @@
 </style>
 </head>
 <body>
-<h1>Magic: The Gathering Card Search</h1>
-<input class="searchbar" type="text" value="{{ query }}">
-<input type="submit" value="Search">
+<h1><a href="/">Magic: The Gathering Card Search</a></h1>
+<form action="results" method="GET">
+<input class="searchbar" type="text" name="searchquery">
+<input type="submit">
+</form>
 <br/>
 <br/>
 <div class="results">
