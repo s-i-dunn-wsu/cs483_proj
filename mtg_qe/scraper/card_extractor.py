@@ -148,7 +148,7 @@ class CardExtractor(object):
         # Each clause is in its own <div class='cardTextBox'> field
         # any nested mana costs are <img> tags, as usual.
         # For the mana costs we'll use regular expression substitution.
-        pattern = r'(<img.*>alt="(.).*?>)'
+        pattern = r'<\s*img\s.*?alt="(.).*?>'
 
         text_blocks = []
 
@@ -159,7 +159,7 @@ class CardExtractor(object):
 
             # Now we pass the corrected field back into BeautifulSoup
             # (so we can use it to strip out nonsense like styling)
-            soup = bs(corrected)
+            soup = bs(corrected, features='html.parser')
             text_blocks.append(soup.getText().strip())
 
         card.text = "\n".join(text_blocks)
