@@ -155,7 +155,7 @@ class CardExtractor(object):
         # For the record: this can be done in a single comprehension.
         # A very illegible comprehension ;)
         for subfield in field.find_all('div', class_='cardtextbox'):
-            corrected = re.sub(pattern, r"{\2}", str(subfield))
+            corrected = re.sub(pattern, r"{\1}", str(subfield))
 
             # Now we pass the corrected field back into BeautifulSoup
             # (so we can use it to strip out nonsense like styling)
