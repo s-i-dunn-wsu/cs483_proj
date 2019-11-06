@@ -104,6 +104,7 @@ class CardExtractor(object):
         card.multiverseid = self._multiverseid
         card.name = extract_text(self.identify_id('nameRow'), False)
         self._extract_image_href(card)
+        self._extract_rules_text(card)
         card.type = extract_text(self.identify_id('typeRow'), False)
 
         if not 'land' in card.type.lower(): # No land has mana cost, AFAIK
@@ -117,7 +118,6 @@ class CardExtractor(object):
         if 'creature' in card.type.lower():
             card.p_t = extract_text(self.identify_id('ptRow'))
 
-        card.text = extract_text(self.identify_id('textRow'))
         card.flavor = extract_text(self.identify_id('flavorRow'))
         card.rarity = extract_text(self.identify_id('rarityRow'), False)
         card.expansion = extract_text(self.identify_id('setRow'), False)
