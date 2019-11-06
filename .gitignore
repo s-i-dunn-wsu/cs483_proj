@@ -115,3 +115,4 @@ venv.bak/
 intermediates/*
 .vscode/*
 artwork/*
+.DS_Store

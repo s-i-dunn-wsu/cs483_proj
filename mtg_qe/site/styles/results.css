@@ -1,0 +1,28 @@
+body {
+    background-color: #333333;
+    color: white;
+    font-family: Arial;
+    text-align: center;
+}
+h1 {
+    font-family: "Beleren Bold";
+}
+h3 {
+    text-align: left;
+}
+input.searchbar {
+    width: 300px;
+}
+table {
+    border-spacing: 10px;
+    width: 75%;
+}
+img {
+    height: 175px;
+}
+div.results {
+    text-align: left;
+}
+a {
+    color: white;
+}

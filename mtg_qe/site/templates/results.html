@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="styles/results.css">
+<style>
+@font-face {
+    font-family: "Beleren Bold";
+    src:url("fonts/BELEREN-BOLD.woff") format("woff");
+}
+</style>
+</head>
+<body>
+<h1>Magic: The Gathering Card Search</h1>
+<input class="searchbar" type="text" value="{{ query }}">
+<input type="submit" value="Search">
+<br/>
+<br/>
+<div class="results">
+<table align="center">
+<tr>
+<th colspan="2"><h3>Results for "{{ query }}"...</h3></th>
+</tr>
+{% for tuple in result %}
+<tr>
+<td><img src="images/{{ tuple[2] }}"></td>
+<td valign="top">
+<h3><a href="/cardinfo?cardid={{ tuple[0] }}">{{ tuple[0] }}</a></h3><br/>
+{{ tuple[1] }}
+</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+</body>
+</html>
