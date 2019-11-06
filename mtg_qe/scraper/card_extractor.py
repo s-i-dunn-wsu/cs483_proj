@@ -4,6 +4,7 @@
 import re
 from enum import Enum, auto
 from requests.compat import urljoin
+from bs4 import BeautifulSoup as bs
 
 try:
     from ..model.card import Card
@@ -123,6 +124,41 @@ class CardExtractor(object):
         card.set_number = extract_text(self.identify_id('numberRow'))
 
         return card
+
+    def _extract_rules_text(self, card):
+        """
+        Attempts to extract the rules text in a format-savvy way.
+        Merely finding the node and calling the getText() method
+        of the BeautifulSoup object was leading to poor formatting
+        (missing line breaks, ignored mana costs, etc.)
+        This method attempts to resolve that by ensuring line breaks
+        are adhered to, and mana costs are converted to ascii.
+            ex: <green mana symbol> becomes {G}, 4 colorless becomes {4}
+        """
+        # Get the parse node with the data we want.
+        id = self.identify_id('textRow')
+        field = self._soup.find('div', id=id).find('div', class_='value')
+
+        # Now, rather than call .getText() on it, we'll
+        # convert it to a string and do a manual parse on it.
+        # Each clause is in its own <div class='cardTextBox'> field
+        # any nested mana costs are <img> tags, as usual.
+        # For the mana costs we'll use regular expression substitution.
+        pattern = r'(<img.*>alt="(.).*?>)'
+
+        text_blocks = []
+
+        # For the record: this can be done in a single comprehension.
+        # A very illegible comprehension ;)
+        for subfield in field.find_all('div', class_='cardtextbox'):
+            corrected = re.sub(pattern, r"{\2}", str(subfield))
+
+            # Now we pass the corrected field back into BeautifulSoup
+            # (so we can use it to strip out nonsense like styling)
+            soup = bs(corrected)
+            text_blocks.append(soup.getText().strip())
+
+        card.text = "\n".join(text_blocks)
 
     def _extract_image_href(self, card):
         """
