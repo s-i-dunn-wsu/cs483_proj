@@ -216,6 +216,12 @@ class SetAgent(Agent):
             l = []
             for row in table.find_all('tr', class_='cardItem'):
                 children = [x for x in row.children] # the row.children property is an iterable, but not subscriptable (which is what we need)
+                if len(children) <= c:
+                    # This occurs when there's no relevant information for this card.
+                    # EX: the card has no legal play formats.
+                    self._log.warn(f"Unable to find '{col_header}'' info for this card.")
+                    return []
+
                 l.append(children[c].getText().strip())
 
             return l
