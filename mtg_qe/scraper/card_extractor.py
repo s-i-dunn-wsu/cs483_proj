@@ -79,7 +79,7 @@ class CardExtractor(object):
         'ctl00_ctl00_ctl00_MainContent_SubContent_SubContent_nameRow' on *most* pages.
         """
         rs = r'ClientIDs.{}\s*=\s*[\'"](.*)[\'"];*'.format(str_id)
-        m = re.match(rs, str(self._page_soup))
+        m = re.search(rs, str(self._page_soup))
         if m:
             return m.group(1).strip()
         else:
