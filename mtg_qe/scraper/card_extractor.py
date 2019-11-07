@@ -2,6 +2,8 @@
 # CS 483 Fall2019
 
 import re
+import os
+import logging
 from enum import Enum, auto
 from requests.compat import urljoin
 from bs4 import BeautifulSoup as bs
@@ -102,7 +104,20 @@ class CardExtractor(object):
 
         card.gatherer_link = self._link
         card.multiverseid = self._multiverseid
-        card.name = extract_text(self.identify_id('nameRow'), False)
+
+        try:
+            card.name = extract_text(self.identify_id('nameRow'), False)
+        except Exception:
+            try:
+                os.makedirs('errors')
+            except OSError:
+                pass
+            logging.getLogger("CE").error(f"MID:{card.multiverseid}, found ID: {self.identify_id('nameRow')}, encountered error.")
+            with open(os.path.join('errors', str(card.multiverseid) + '.html'), 'w') as fd:
+                fd.write(str(self._page_soup))
+
+            raise
+
         self._extract_image_href(card)
         self._extract_rules_text(card)
         card.type = extract_text(self.identify_id('typeRow'), False)
