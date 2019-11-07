@@ -7,16 +7,34 @@ corpus = [['Crooked Scales', '4, Tap: Flip a coin. If you win the flip, destroy 
 
 card = ['Hardened Scales', 'If one or more +1/+1 counters would be put on a creature you control, that many plus one +1/+1 counters are put on it instead.', 'Image.ashx.png']
 
+simple = 1
+
 class MTGSearch(object):
+
     @cherrypy.expose
     def index(self):
+        global simple
+        simple = 1
         template = env.get_template('index.html')
         return template.render()
     
     @cherrypy.expose
+    def advanced(self):
+        global simple
+        simple = 0
+        template = env.get_template('advanced.html')
+        return template.render()
+    
+    @cherrypy.expose
     def results(self, searchquery):
+        if (searchquery == ''):
+            if (simple == 1):
+                raise cherrypy.HTTPRedirect('/')
+            else:
+                raise cherrypy.HTTPRedirect('advanced')
         template = env.get_template('results.html')
         return template.render(query=searchquery, result=corpus)
+        
     
     @cherrypy.expose
     def cardinfo(self, cardid):
