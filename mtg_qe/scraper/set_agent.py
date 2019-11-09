@@ -12,11 +12,13 @@ import logging
 try:
     from .agent import Agent
     from .card_extractor import CardExtractor
+    from .printings_extractor import PrintingExtractor
     from ..utils.json_helpers import CardEncoder
     from ..utils.path_helpers import  normalize_name
 except ImportError:
     from mtg_qe.scraper.agent import Agent
     from mtg_qe.scraper.card_extractor import CardExtractor
+    from mtg_qe.scraper.printings_extractor import PrintingExtractor
     from mtg_qe.utils.json_helpers import CardEncoder
     from mtg_qe.utils.path_helpers import  normalize_name
 
@@ -202,40 +204,7 @@ class SetAgent(Agent):
         link = link.replace("Details", "Printings")
         soup = bs(self._active_regulator.get(link), features='html.parser')
 
+        # Create a Printing Extractor
+        pe = PrintingExtractor(link, soup)
 
-        def extract_all_col_values(table, col_header):
-            c = 0
-            header = table.find('tr', class_='headerRow')
-            for col in header.children:
-                span = col.find('span')
-                if span and span != -1 and span.getText().strip() == col_header:
-                    break
-                c += 1
-
-            # now we know which column to pull values from in the non-header rows.
-            l = []
-            for row in table.find_all('tr', class_='cardItem'):
-                children = [x for x in row.children] # the row.children property is an iterable, but not subscriptable (which is what we need)
-                if len(children) <= c:
-                    # This occurs when there's no relevant information for this card.
-                    # EX: the card has no legal play formats.
-                    self._log.warn(f"Unable to find '{col_header}'' info for this card.")
-                    return []
-
-                l.append(children[c].getText().strip())
-
-            return l
-
-        # there are two tables on this page with the class='cardList', the first
-        # contains entries of other printings
-        # the latter contains format legality.
-        tables = soup.find_all('table', class_='cardList')
-        if len(tables) != 2:
-            raise RuntimeError(f"Card's format page is unrecognized! (multiverseid={card.multiverseid})")
-
-        printing_sets = extract_all_col_values(tables[0], 'Set')
-        formats = extract_all_col_values(tables[1], 'Format')
-        legality = extract_all_col_values(tables[1], 'Legality')
-        legal_formats = [x[0] for x in zip(formats, legality) if x[1].lower() == 'legal']
-
-        return printing_sets, legal_formats
+        return pe.extract_printing_information(), pe.extract_format_information()

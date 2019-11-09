@@ -254,11 +254,11 @@ class Card(object):
         """
         Returns a list of expansions, by name, that also feature this card.
         """
-        return tuple(self._printings)
+        return self._printings
 
     @other_prints.setter
     def other_prints(self, value):
-        self._printings = value[:]
+        self._printings = value.copy()
 
     @property
     def artwork_folder(self):
