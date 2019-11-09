@@ -33,9 +33,6 @@ class PrintingExtractor(object):
 
         ret = {}
         for x in range(len(card_names)):
-            link = card_names[x].find('a')
-            if link == -1:
-                print(f"card_names[x]: {str(card_names[x].prettify())}", file=sys.stderr)
             mid = re.match(r'.*[\?\&]multiverseid=(\d*).*', card_names[x].find('a')['href']).group(1)
             ret[sets[x]] = mid
 
