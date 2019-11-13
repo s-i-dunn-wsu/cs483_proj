@@ -1,6 +1,7 @@
 # Noah Scarbrough
 # CS 483, Fall 2019
 
+import os
 import random
 import requests
 from lxml import html
@@ -15,11 +16,25 @@ def related_cards(name, amount):
     all_related = []
     counted = []
     max = 1
-    paths = related_decks(name)
+    paths = related_decks(name, 3)
     results = []
     sorted = [[]]
+    if not os.path.exists('../../related_cache'):
+        os.mkdir('../../related_cache')
     for path in paths:
-        source = get_html(site + path)
+        deck_name = path.split('/')[len(path.split('/')) - 2]
+        local_path ='../../related_cache/' + deck_name + '.html'
+        if os.path.exists(local_path):
+            print('Cache exists')
+            f = open(local_path)
+            source = html.fromstring(f.read())
+            f.close()
+        else:
+            print('Cache does not exist')
+            source = get_html(site + path)
+            f = open(local_path, 'wb')
+            f.write(html.tostring(source))
+            f.close()
         all_related += source.xpath('//div/ul/li/a/@data-orig')
     for i in range(len(all_related)):
         sorted.append([])
@@ -36,10 +51,10 @@ def related_cards(name, amount):
             max -= 1
     print(results)
 
-def related_decks(name):
+def related_decks(name, decks):
     url = site + '/mtg-decks/search/?q=' + name
     source = get_html(url)
-    return source.xpath('//div/h3/a/@href')[:2]
+    return source.xpath('//div/h3/a/@href')[:decks]
 
 if __name__ == '__main__':
-    related_cards('Opposition', 5)
+    related_cards('Leyline of Anticipation', 5)
