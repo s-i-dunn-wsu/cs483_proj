@@ -98,8 +98,8 @@ class CardExtractor(object):
             except Exception:
                 # Fall back to the whole page instead of juts the 'rightCol' field.
                 try:
-                    field = self._page_soup.find('div', id=id).getText().strip()
-                    return field.find('div', class_='value')
+                    field = self._page_soup.find('div', id=id)
+                    return field.find('div', class_='value').getText().strip()
 
                 except Exception:
                     if not may_be_empty:
