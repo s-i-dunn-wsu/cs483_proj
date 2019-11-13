@@ -92,7 +92,8 @@ class CardExtractor(object):
         """
         def extract_text(id, may_be_empty=True):
             try:
-                return self._soup.find('div', id=id).find('div', class_='value').getText().strip()
+                field = self._soup.find('div', id=id)
+                return field.find('div', class_='value').getText().strip()
             except Exception:
                 if not may_be_empty:
                     raise
