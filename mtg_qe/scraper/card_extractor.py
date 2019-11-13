@@ -153,7 +153,8 @@ class CardExtractor(object):
         # Get the parse node with the data we want.
         id = self.identify_id('textRow')
         try:
-            field = self._soup.find('div', id=id).find('div', class_='value')
+            field = self._soup.find('div', id=id)
+            field = field.find('div', class_='value')
         except Exception:
             # We'll except here if there is no rules text field.
             return
