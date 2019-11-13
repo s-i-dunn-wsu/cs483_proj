@@ -93,14 +93,17 @@ class CardExtractor(object):
         def extract_text(id, may_be_empty=True):
             try:
                 field = self._soup.find('div', id=id)
-                try:
-                    return field.find('div', class_='value').getText().strip()
-                except Exception:
-                    logging.getLogger("CE").error(f"Failed to find field with id: {id}")
-                    raise
+                return field.find('div', class_='value').getText().strip()
+
             except Exception:
-                if not may_be_empty:
-                    raise
+                # Fall back to the whole page instead of juts the 'rightCol' field.
+                try:
+                    field = self._page_soup.find('div', id=id).getText().strip()
+                    return field.find('div', class_='value')
+
+                except Exception:
+                    if not may_be_empty:
+                        raise
 
         def extract_mana(sub_soup):
             return [x['alt'] for x in sub_soup.children if not isinstance(x, str)]
