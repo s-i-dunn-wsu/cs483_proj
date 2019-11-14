@@ -29,6 +29,7 @@ except ImportError:
 
 class Coordinator(object):
     task_incomplete = object() # identity used to signal that an agent was unable to complete a task.
+    intermediates_dir = None # this gets set to specify where to save intermediate content.
 
     def __init__(self, num_threads = 2):
         # Create the request regulators.
@@ -58,30 +59,22 @@ class Coordinator(object):
 
         # Now compare the list of set names to the 'completed' sets, stored (relative to execution)
         # at 'intermediate/sets/{set_name}_mtg_set.json'
-        intermediates = os.path.abspath(os.path.join('.', 'intermediates', 'sets'))
-        if not os.path.exists(intermediates):
-            # Create the directories.
+
+        # ensure folders the scraper depends on existing are present.
+        for subdir in ('sets', 'cards'):
             try:
-                os.mkdir('intermediates')
+                os.mkdir(os.path.join(Coordinator.intermediates_dir, subdir))
             except OSError:
-                pass
+                pass # already exists
 
-            os.mkdir(os.path.join('.', 'intermediates', 'sets'))
-            os.mkdir(os.path.join('.', 'intermediates', 'cards'))
-
-        elif not os.path.isdir(intermediates):
-            self._log.error(f"The intermediate storage path {intermediates} is blocked by a file in that location! Please remove it and try again.")
-            raise RuntimeError(f"The intermediate storage path {intermediates} is blocked by a file in that location! Please remove it and try again.")
-
-        self._intermediates_path = intermediates
+        self._intermediates_path = os.path.join(Coordinator.intermediates_dir, 'sets')
         # Load the list of completed modules, create a to_do list which is the difference between the two.
-        self._completed = [x.group(1).replace('_', ' ') for x in (re.match(r'(.*)_mtg_set.json', f) for f in os.listdir(intermediates)) if x]
+        self._completed = [x.group(1).replace('_', ' ') for x in (re.match(r'(.*)_mtg_set.json', f) for f in os.listdir(self._intermediates_path)) if x]
 
         self._to_do = mp.Queue()
         for item in (x for x in self._set_names if x not in self._completed):
             if item:    # filter out empty strings.
                 self._to_do.put(item)
-
 
     def get_next_task(self):
         """

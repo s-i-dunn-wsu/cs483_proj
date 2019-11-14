@@ -300,9 +300,10 @@ class Card(object):
     @property
     def local_artwork(self):
         """
-        Returns an un-rooted path to where the artwork for this card should be saved.
+        Returns an un-rooted path to where the artwork for this card should be saved
+        relative to the 'artwork' directory. (unknown to this property)
         """
-        return os.path.join('artwork', str(self._multiverseid), normalize_name(self._expansion) + '.png')
+        return os.path.join(str(self._multiverseid), normalize_name(self._expansion) + '.png')
 
     @property
     def artist(self):
