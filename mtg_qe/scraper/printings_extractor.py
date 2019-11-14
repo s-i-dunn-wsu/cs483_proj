@@ -3,6 +3,7 @@
 
 import re
 import sys
+import logging
 
 class PrintingExtractor(object):
     def __init__(self, link, page_soup):
@@ -68,7 +69,7 @@ class PrintingExtractor(object):
             if len(children) <= c:
                 # This occurs when there's no relevant information for this card.
                 # EX: the card has no legal play formats.
-                self._log.warn(f"Unable to find '{col_header}'' info for this card.")
+                logging.getLogger('PE').warn(f"Unable to find '{col_header}' info for this card.")
                 return []
 
             if leave_as_parse_node:
