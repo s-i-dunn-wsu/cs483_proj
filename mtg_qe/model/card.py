@@ -8,6 +8,7 @@
 
 import os
 from requests.compat import urljoin
+import json
 
 try:
     from ..utils.path_helpers import normalize_name, join_urls
@@ -64,6 +65,35 @@ class Card(object):
             "multiverseid": self.multiverseid
         }
 
+    def deserialize(self, obj):
+        """
+        Takes a serialized object and populates self with its fields.
+        For convenience, this function returns self.
+        """
+        if isinstance(obj, str):
+            obj = json.loads(obj)
+
+        if obj['schema'] == 1:
+            self.name = obj['name']
+            self.rarity = obj['rarity']
+            self.mana_cost = obj['mana']
+            self._type = obj['type']
+            self._subtypes = obj['subtypes']
+            self.text = obj['text']
+            self.flavor = obj['flavor_text']
+            self.expansion = obj['expansion']
+            self.other_prints = obj['printings']
+            self.set_number = obj['set_number']
+            self.legal_formats = obj['formats']
+            self.external_artwork = obj['artwork_external']
+            self.multiverseid = obj['multiverseid']
+
+            if obj['power'] and obj['toughness']:
+                self.p_t = obj['power'] + '/' + obj['toughness']
+
+        # for convenience:
+        return self
+
     @property
     def multiverseid(self):
         """
@@ -103,7 +133,8 @@ class Card(object):
         """
         Sets the mana cost of the card (convert to the appropriate class as necessaary)
         """
-        self._mana = value[:]
+        if value:
+            self._mana = value[:]
 
     @property
     def cmc(self):
