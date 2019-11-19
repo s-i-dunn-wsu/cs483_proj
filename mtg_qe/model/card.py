@@ -81,16 +81,17 @@ class Card(object):
             self._subtypes = obj['subtypes']
             self.text = obj['text']
             self.flavor = obj['flavor_text']
-            self.p_t = obj['power'] + '/' + obj['toughness']
             self.expansion = obj['expansion']
             self.other_prints = obj['printings']
             self.set_number = obj['set_number']
             self.legal_formats = obj['formats']
             self.external_artwork = obj['artwork_external']
-            self.local_artwork = obj['artwork_internal'] # not really sure why I'm tracking this field to be honest. It won't always be right.
             self.multiverseid = obj['multiverseid']
 
-        # for line-reduction when used:
+            if obj['power'] and obj['toughness']:
+                self.p_t = obj['power'] + '/' + obj['toughness']
+
+        # for convenience:
         return self
 
     @property
