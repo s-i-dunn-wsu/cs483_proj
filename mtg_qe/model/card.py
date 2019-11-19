@@ -45,7 +45,7 @@ class Card(object):
             version, allowing us to ensure backwards compatibility.
         """
         return {
-            "schema": 1,
+            "schema": 2,
             "name": self.name,
             "rarity": self.rarity,
             "mana": self.mana_cost,
@@ -62,7 +62,8 @@ class Card(object):
             "formats" : self.legal_formats,
             "artwork_external" : self.external_artwork,
             "artwork_internal" : self.local_artwork,
-            "multiverseid": self.multiverseid
+            "multiverseid": self.multiverseid,
+            "source_link" : self.gatherer_link
         }
 
     def deserialize(self, obj):
@@ -73,7 +74,7 @@ class Card(object):
         if isinstance(obj, str):
             obj = json.loads(obj)
 
-        if obj['schema'] == 1:
+        if obj['schema'] in (1, 2):
             self.name = obj['name']
             self.rarity = obj['rarity']
             self.mana_cost = obj['mana']
@@ -90,6 +91,9 @@ class Card(object):
 
             if obj['power'] and obj['toughness']:
                 self.p_t = obj['power'] + '/' + obj['toughness']
+
+        if obj['schema'] == 2:
+            self.gatherer_link = obj['source_link']
 
         # for convenience:
         return self
