@@ -11,12 +11,14 @@ import logging
 
 try:
     from .agent import Agent
+    from .coordinator import Coordinator
     from .card_extractor import CardExtractor
     from .printings_extractor import PrintingExtractor
     from ..utils.json_helpers import CardEncoder
     from ..utils.path_helpers import  normalize_name
 except ImportError:
     from mtg_qe.scraper.agent import Agent
+    from mtg_qe.scraper.coordinator import Coordinator
     from mtg_qe.scraper.card_extractor import CardExtractor
     from mtg_qe.scraper.printings_extractor import PrintingExtractor
     from mtg_qe.utils.json_helpers import CardEncoder
@@ -36,11 +38,11 @@ class SetAgent(Agent):
         self._active_regulator = regulator
         self._current_page = 0
 
-        # Conveniently, Coordinator makes sure ./intermediates/cards exists
+        # Conveniently, Coordinator makes sure the <intermediates>/cards folder exists
         # so we just need to make interemdiates/cards/{set_name} to store
         # single cards in.
         try:
-            os.mkdir(os.path.join('intermediates', 'cards', normalize_name(set_name)))
+            os.mkdir(os.path.join(Coordinator.intermediates_dir, 'cards', normalize_name(set_name)))
         except OSError:
             pass
 
@@ -117,7 +119,7 @@ class SetAgent(Agent):
                 query_info = urllib.parse.parse_qs(urllib.parse.urlparse(link).query)
                 f = "_".join([f"{key}_{query_info[key][0] if isinstance(query_info[key], (list, tuple)) else query_info[key]}" for key in sorted(query_info.keys())])
 
-                intermediates_path = os.path.join('intermediates', 'cards', normalize_name(self._acitve_set_name), f + '.json')
+                intermediates_path = os.path.join(Coordinator.intermediates_dir, 'cards', normalize_name(self._acitve_set_name), f + '.json')
                 do_extract = True
                 if os.path.exists(intermediates_path) and os.path.isfile(intermediates_path):
                     # Note: we should alos check the schema, and re-scrape if its stale.
@@ -144,13 +146,13 @@ class SetAgent(Agent):
 
                     # And the last order of business:
                     # download and save the image for this card.
-
+                    art_path = os.path.join(Coordinator.intermediates_dir, 'artwork', card.local_artwork)
                     try:
-                        os.makedirs(card.artwork_folder)
+                        os.makedirs(os.path.dirname(art_path))
                     except OSError:
                         pass # folder exists.
 
-                    with open(card.local_artwork, 'wb') as fd:
+                    with open(art_path, 'wb') as fd:
                         img_data = self._active_regulator.get(card.external_artwork, as_bytes = True)
                         fd.write(img_data)
 
