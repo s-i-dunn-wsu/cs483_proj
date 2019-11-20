@@ -1,6 +1,11 @@
 from setuptools import find_packages, setup
 
 if __name__ == "__main__":
+    if not any([x.endswith('.tar.gz') for x in os.listdir(os.path.join('.', 'mtg_qe', 'data'))]):
+        import sys
+        print("Unable to locate a dataset archive. Please run the scraper and place output .tar.gz in mtg_qe/data/", file=sys.stderr)
+        sys.exit(1)
+
     setup(
         name="mtg_qe",
         version="0.1.0",
@@ -12,7 +17,8 @@ if __name__ == "__main__":
         entry_points={
             'console_scripts': [
                 'mtg_qe_setup_index = mtg_qe.data.index_setup:cli_entry',
-                'mtg_qe_scrape = mtg_qe.scraper.cli_entry'
+                'mtg_qe_scrape = mtg_qe.scraper:cli_entry',
+                'mtg_qe_unpack = mtg_qe.data:unpack'
             ]
         },
         package_data={
