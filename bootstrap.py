@@ -13,9 +13,4 @@ logging.basicConfig(level=logging.INFO, filename=f'scrape_{stime}.log')
 logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
 
 if __name__ == "__main__":
-	sys.argv.append('-n')
-	sys.argv.append('1')
-	sys.argv.append('-o')
-	sys.argv.append('tmp.tar.gz')
-
 	cli_entry()
