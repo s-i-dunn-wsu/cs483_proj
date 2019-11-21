@@ -1,6 +1,12 @@
 # Samuel Dunn
 # CS 483, Fall 2019
 
+from enum import Enum, auto
+
+class SearchTypes(Enum):
+    Simple = auto()
+    Advanced = auto()
+
 class SearchResults(object):
     """
     There are two scenarios we'll find ourselves in when getting
@@ -14,6 +20,7 @@ class SearchResults(object):
     Either way, this class serves to facilitate the representation of result
     data.
     """
+
     def __init__(self, search_type, query_params, searcher = None):
         """
         """
