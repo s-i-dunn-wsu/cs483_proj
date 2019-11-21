@@ -2,13 +2,17 @@
 # CS 483, Fall 2019
 
 import os
-from whoosh import fields, index
+import whoosh
+from . import get_data_location
 
 def make_whoosh_schema():
     """
     Creates and returns the whoosh schema being used.
+    Note: typically you will want to retrieve the schema from
+          the index itself (ix.schema).
+          This function exists to create a schema object during
+          the creation of the index.
     """
-
     schema = fields.Schema(name = fields.TEXT,
                             rules_text = fields.TEXT,
                             flavor_text = fields.TEXT,
@@ -19,14 +23,9 @@ def make_whoosh_schema():
     return schema
 
 
-def get_index_object():
+def get_whoosh_index():
     """
-    creates the whoosh index in ./whoosh_index if it does not already exist.
-    otherwise creates an index in ./whoosh_index.
-    returns the index handle.
+    Locates, loads, and returns the whoosh index bundled with the package installation.
     """
-    if not os.path.exists("whoosh_index"):
-        os.mkdir("whoosh_index")
-        return index.create_in(os.path.abspath("whoosh_index"), make_whoosh_schema())
-    else:
-        return index.open_dir(os.path.abspath('whoosh_index'))
+    whoosh_path = os.path.join(get_data_location(), 'whoosh_index')
+    return whoosh.index.open_dir(whoosh_path)
