@@ -3,6 +3,8 @@
 
 import time
 
+
+
 class SearchDelegate(object):
     """
     There are two scenarios we'll find ourselves in when getting
@@ -22,8 +24,16 @@ class SearchDelegate(object):
         """
         self._query = query_obj
         self._point_params = point_params
-
         self._spawn_time = time.time()
+        self._searcher = None
+
+    def close(self):
+        """
+        Closes the active searcher object, if it exists.
+        """
+        if self._searcher is not None:
+            self._searcher.close()
+
 
     def num_pages(self):
         """
@@ -40,11 +50,14 @@ class SearchDelegate(object):
         """
         """
         from . import get_whoosh_index
-        ix = get_whoosh_index()
+
+        if self._searcher is None:
+            ix = get_whoosh_index()
+            self._searcher = ix.searcher()
+
         r = None
-        with ix.searcher() as searcher:
-            results = searcher.search_page(self._query, n+1, pagelen=page_size)
-            r = [x['data_obj'] for x in results]
+        results = self._searcher.search_page(self._query, n+1, pagelen=page_size)
+        r = [x['data_obj'] for x in results]
 
         return r
 

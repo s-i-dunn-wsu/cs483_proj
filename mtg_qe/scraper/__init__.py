@@ -61,16 +61,12 @@ def cli_entry():
         # now within the intermediates folder there should be:
         #   an artwork dir
         #   a sets dir
-        # We want both, so lets move them into a single folder and
-        # tar that.
-        os.mkdir(os.path.join(Coordinator.intermediates_dir, 'raw_data'))
-        shutil.move(os.path.join(Coordinator.intermediates_dir, 'sets'), os.path.join(Coordinator.intermediates_dir, 'raw_data', 'sets'))
-        shutil.move(os.path.join(Coordinator.intermediates_dir, 'artwork'), os.path.join(Coordinator.intermediates_dir, 'raw_data', 'artwork'))
-
-        # now we're ready to tar it all.
+        # we can tar them, bu we want them to appear to be in the same dir within the archive
+        # so we'll use the arcname parameter:
         try:
-            with open(tarfile.open(args.output, 'w:gz')) as tar:
-                tar.add(os.path.join(Coordinator.intermediates_dir, 'raw_data'))
+            with tarfile.open(args.output, 'w:gz') as tar:
+                tar.add(os.path.join(Coordinator.intermediates_dir, 'sets'), arcname='raw_data/sets')
+                tar.add(os.path.join(Coordinator.intermediates_dir, 'artwork'), arcname='raw_data/artwork')
         except Exception:
             raise # not trying for the execption clause
         finally:

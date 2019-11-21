@@ -10,11 +10,23 @@
 # these data sources.
 
 import os
+import functools
 
 from . import whoosh_integrations
 from . import internal_index_integration
 
 from whoosh.qparser import MultifieldParser, QueryParser, AndGroup, OrGroup
+
+def require_unpacked_archive(meth):
+    """
+    this method ensures that the corpus archive is unpacked and ready to go
+    """
+    @functools.wraps(meth)
+    def wrapper(*args, **kwargs):
+        unpack_archive() # this method exits early if its not needed.
+        return meth(*args, **kwargs)
+
+    return wrapper
 
 def get_data_location():
     """
@@ -23,10 +35,29 @@ def get_data_location():
     here = os.path.dirname(os.path.abspath(__file__)) # the directory this file is located in.
     return os.path.join(here, 'corpus_files')
 
+@require_unpacked_archive
 def get_whoosh_index():
     """
     """
-    return whoosh_integrations.get_whoosh_index()
+    try:
+        return whoosh_integrations.get_whoosh_index()
+    except Exception:
+        unpack_archive()
+        return whoosh_integrations.get_whoosh_index()
+
+@require_unpacked_archive
+def get_internal_index():
+    """
+    Returns the 'internal index' for the project.
+    The internal index is a pair of dicts that arrange
+    card objects in easy-to-use outside of whoosh ways.
+    The first dict, keyed by 'by_name', stores cards instances
+    with a unique name. The second dict, keyed by 'by_multiverseid',
+    stores all cards (all cards scraped) by their multiverseid.
+    Between the two, any time we have a result from whoosh and need
+    to navigate to another card or print, we should be covered.
+    """
+    return internal_index_integration.get_internal_index()
 
 def simple_query(query, or_group=False, page = 0, n = 10):
     """
@@ -46,7 +77,6 @@ def simple_query(query, or_group=False, page = 0, n = 10):
     from .search_results import SearchDelegate
     return SearchDelegate(query, None).get_page(page, n)
 
-
 def advanced_query(text_parameters, range_parameters = {}, point_parameters = {}, page = 0, n = 10):
     """
     :param dict text_paramters: a dictionary of field-to-query pairs specifying text-based queries.
@@ -62,19 +92,6 @@ def advanced_query(text_parameters, range_parameters = {}, point_parameters = {}
     :param int n: the number of results per page.
     :return: Exact class TBD, will provide way to iterate over the page's worth of results.
     """
-
-def get_internal_index():
-    """
-    Returns the 'internal index' for the project.
-    The internal index is a pair of dicts that arrange
-    card objects in easy-to-use outside of whoosh ways.
-    The first dict, keyed by 'by_name', stores cards instances
-    with a unique name. The second dict, keyed by 'by_multiverseid',
-    stores all cards (all cards scraped) by their multiverseid.
-    Between the two, any time we have a result from whoosh and need
-    to navigate to another card or print, we should be covered.
-    """
-    return internal_index_integration.get_internal_index()
 
 def find_card_by_multiverseid(multiverseid):
     """
@@ -114,8 +131,8 @@ def unpack_archive():
 
         # Find the .tar.gz packaged in with the bundle.
         here = os.path.dirname(os.path.abspath(__file__)) # the directory this file is located in.
-        targz_files = [x for x in os.listdir(here) if x.endswith('.tar.gz')]
-        if len(targz_files) == 1:
+        targz_files = [os.path.join(here, x) for x in os.listdir(here) if x.endswith('.tar.gz')]
+        if len(targz_files) == 0:
             error_msg = "Unable to find corpus archive file!"
             logger.warn(error_msg)
             raise RuntimeError(error_msg)
@@ -125,14 +142,9 @@ def unpack_archive():
             logger.warn(error_msg)
             raise RuntimeError(error_msg)
 
-        archive = tarfile.TarFile(targz_files[0], 'r:gz')
-
-        try:
-            archive.extractall(here)
-        except Exception:
-            logging.error("Encountered error extracting archive? Is this installed to base python interpreter? If so use sudo.")
-            raise
-
-
-
-
+        with tarfile.open(targz_files[0], 'r:gz') as archive:
+            try:
+                archive.extractall(here)
+            except Exception:
+                logging.error("Encountered error extracting archive? Is this installed to base python interpreter? If so use sudo.")
+                raise

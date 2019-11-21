@@ -19,7 +19,7 @@ if __name__ == "__main__":
                 'mtg_qe = mtg_qe.site.main:main',
                 'mtg_qe_setup_index = mtg_qe.data.index_setup:cli_entry',
                 'mtg_qe_scrape = mtg_qe.scraper:cli_entry',
-                'mtg_qe_unpack = mtg_qe.data:unpack'
+                'mtg_qe_unpack = mtg_qe.data:unpack_archive'
             ]
         },
         package_data={
