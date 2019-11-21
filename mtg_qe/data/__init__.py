@@ -44,7 +44,9 @@ def simple_query(query, or_group=False, page = 0, n = 10):
 
         # convert whoosh results (which depend on the lifecycle of the searcher)
         # to another easy-to-use format.
-        # return that format.
+        sr = search_results.SearchResults(search_results.SearchTypes.Simple, query, results, None)
+
+        return sr
 
 
 def advanced_query(text_parameters, range_parameters = {}, point_parameters = {}, page = 0, n = 10):

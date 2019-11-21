@@ -101,4 +101,3 @@ def cli_entry():
         with tarfile.TarFile(args.output, "w:gz") as tar:
             tar.add(os.path.join(td, 'internal_index.json'), arc_name = "internal_index.json")
             tar.add(os.path.join(td, 'whoosh_index'), arc_name = 'whoosh_index')
-

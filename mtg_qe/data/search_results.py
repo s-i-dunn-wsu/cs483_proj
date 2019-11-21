@@ -1,13 +1,9 @@
 # Samuel Dunn
 # CS 483, Fall 2019
 
-from enum import Enum, auto
+import time
 
-class SearchTypes(Enum):
-    Simple = auto()
-    Advanced = auto()
-
-class SearchResults(object):
+class SearchDelegate(object):
     """
     There are two scenarios we'll find ourselves in when getting
     results from whoosh, when we can rely solely on whoosh and when
@@ -21,19 +17,34 @@ class SearchResults(object):
     data.
     """
 
-    def __init__(self, search_type, query_params, searcher = None):
+    def __init__(self, query_obj, point_params = None):
         """
         """
-        self._searcher = searcher
+        self._query = query_obj
+        self._point_params = point_params
 
-    def close(self):
+        self._spawn_time = time.time()
+
+    def num_pages(self):
         """
-        Closes the searcher object, if applicable.
+        Returns the number of pages in the result set.
         """
-        if self._searcher:
-            self._searcher.close()
 
     def get_page(self, n, page_size = 10):
         """
         returns the n'th page in the result set
         """
+        return self._do_whoosh_query(n, page_size)
+
+    def _do_whoosh_query(self, n, page_size):
+        """
+        """
+        from . import get_whoosh_index
+        ix = get_whoosh_index()
+        r = None
+        with ix.searcher() as searcher:
+            results = searcher.search_page(self._query, page=n, pagelen=page_size)
+            r = [x['data_obj'] for x in results]
+
+        return r
+
