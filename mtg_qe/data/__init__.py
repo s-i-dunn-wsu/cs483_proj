@@ -9,20 +9,24 @@
 # serves as an API to the web server code to interface with
 # these data sources.
 
+import os
+
 from . import whoosh_integrations
 from . import internal_index_integration
 
-def get_index_location():
+from whoosh.qparser import MultifieldParser, QueryParser, AndGroup, OrGroup
+
+def get_data_location():
     """
-    Locates the path to the indexes (both whoosh and basic)
-    this may be different based on if the index was set up
-    by a pip installation.
+    Locates the path to where data is saved.
     """
+    here = os.path.dirname(os.path.abspath(__file__)) # the directory this file is located in.
+    return os.path.join(here, 'corpus_files')
 
 def get_whoosh_index():
     """
     """
-    return whoosh_integrations.get_index_object()
+    return whoosh_integrations.get_whoosh_index()
 
 def simple_query(query, or_group=False, page = 0, n = 10):
     """
@@ -33,6 +37,15 @@ def simple_query(query, or_group=False, page = 0, n = 10):
     :param int n: how many results should be in the return set.
     :return: Exact class TBD, will provide way to iterate over the page's worth of results.
     """
+    ix = get_whoosh_index()
+    qparser = MultifieldParser(['rules_text', 'name', 'flavor_text'], ix.schema, group = OrGroup if or_group else AndGroup)
+    #qparser = QueryParser('rules_text', ix.schema, group = OrGroup if or_group else AndGroup)
+    #query_text = f"name:({query}) rules_text:({query}) flavor_text:({query})"
+    query = qparser.parse(query)
+
+    from .search_results import SearchDelegate
+    return SearchDelegate(query, None).get_page(page, n)
+
 
 def advanced_query(text_parameters, range_parameters = {}, point_parameters = {}, page = 0, n = 10):
     """
@@ -52,7 +65,16 @@ def advanced_query(text_parameters, range_parameters = {}, point_parameters = {}
 
 def get_internal_index():
     """
+    Returns the 'internal index' for the project.
+    The internal index is a pair of dicts that arrange
+    card objects in easy-to-use outside of whoosh ways.
+    The first dict, keyed by 'by_name', stores cards instances
+    with a unique name. The second dict, keyed by 'by_multiverseid',
+    stores all cards (all cards scraped) by their multiverseid.
+    Between the two, any time we have a result from whoosh and need
+    to navigate to another card or print, we should be covered.
     """
+    return internal_index_integration.get_internal_index()
 
 def find_card_by_multiverseid(multiverseid):
     """
@@ -63,3 +85,54 @@ def find_card_by_name(name):
     """
     """
     return get_internal_index().get(name, None)
+
+def unpack_archive():
+    """
+    Unpacks the archive if necessary. This is used indirectly as a CLI entry point and by some local
+    methods if necessary.
+    This function also serves as a CLI entry point.
+
+    Info:
+    The archive contains a folder 'corpus_data' that looks something like this:
+    corpus_data/
+        artwork/
+            <all artwork folders and files>
+
+        whoosh_index/
+            <whoosh index files>
+        internal_index.json
+    """
+    import os
+    import logging
+
+    logger = logging.getLogger(__file__)
+    if os.path.exists(get_data_location()):
+        logger.debug("corpus already extracted.")
+
+    else:
+        import tarfile
+
+        # Find the .tar.gz packaged in with the bundle.
+        here = os.path.dirname(os.path.abspath(__file__)) # the directory this file is located in.
+        targz_files = [x for x in os.listdir(here) if x.endswith('.tar.gz')]
+        if len(targz_files) == 1:
+            error_msg = "Unable to find corpus archive file!"
+            logger.warn(error_msg)
+            raise RuntimeError(error_msg)
+
+        if len(targz_files) > 1:
+            error_msg = "Unable to distinguish archive file, there are too many archives here"
+            logger.warn(error_msg)
+            raise RuntimeError(error_msg)
+
+        archive = tarfile.TarFile(targz_files[0], 'r:gz')
+
+        try:
+            archive.extractall(here)
+        except Exception:
+            logging.error("Encountered error extracting archive? Is this installed to base python interpreter? If so use sudo.")
+            raise
+
+
+
+

@@ -17,14 +17,14 @@ class MTGSearch(object):
         simple = 1
         template = env.get_template('index.html')
         return template.render()
-    
+
     @cherrypy.expose
     def advanced(self):
         global simple
         simple = 0
         template = env.get_template('advanced.html')
         return template.render()
-    
+
     @cherrypy.expose
     def results(self, searchquery):
         if (searchquery == ''):
@@ -32,15 +32,22 @@ class MTGSearch(object):
                 raise cherrypy.HTTPRedirect('/')
             else:
                 raise cherrypy.HTTPRedirect('advanced')
+
+        # Actually get the results
+        from ..data import simple_query
+
+        results = simple_query(searchquery)
+
+        # incorperate results into template
         template = env.get_template('results.html')
         return template.render(query=searchquery, result=corpus)
-        
-    
+
+
     @cherrypy.expose
     def cardinfo(self, cardid):
         template = env.get_template('cardinfo.html')
         return template.render(id=cardid, carddata=card)
-        
+
 conf = {
     '/styles': {
         'tools.staticdir.on': True,
@@ -56,4 +63,8 @@ conf = {
     }
 }
 
-cherrypy.quickstart(MTGSearch(), '/', conf)
+def main():
+    cherrypy.quickstart(MTGSearch(), '/', conf)
+
+if __name__ == "__main__":
+    main()
