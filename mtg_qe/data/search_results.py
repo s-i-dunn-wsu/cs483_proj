@@ -43,7 +43,7 @@ class SearchDelegate(object):
         ix = get_whoosh_index()
         r = None
         with ix.searcher() as searcher:
-            results = searcher.search_page(self._query, page=n, pagelen=page_size)
+            results = searcher.search_page(self._query, n+1, pagelen=page_size)
             r = [x['data_obj'] for x in results]
 
         return r

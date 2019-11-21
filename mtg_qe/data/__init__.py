@@ -9,22 +9,24 @@
 # serves as an API to the web server code to interface with
 # these data sources.
 
+import os
+
 from . import whoosh_integrations
 from . import internal_index_integration
 
-from whoosh.qparser import QueryParser, AndGroup, OrGroup
+from whoosh.qparser import MultifieldParser, QueryParser, AndGroup, OrGroup
 
 def get_data_location():
     """
     Locates the path to where data is saved.
     """
     here = os.path.dirname(os.path.abspath(__file__)) # the directory this file is located in.
-    return = os.path.join(here, 'corpus_files')
+    return os.path.join(here, 'corpus_files')
 
 def get_whoosh_index():
     """
     """
-    return whoosh_init.get_index_object()
+    return whoosh_integrations.get_whoosh_index()
 
 def simple_query(query, or_group=False, page = 0, n = 10):
     """
@@ -36,17 +38,13 @@ def simple_query(query, or_group=False, page = 0, n = 10):
     :return: Exact class TBD, will provide way to iterate over the page's worth of results.
     """
     ix = get_whoosh_index()
-    qparser = QueryParser('rules_text', ix.schema, group = OrGroup if or_group else AndGroup)
-    with ix.searcher() as searcher:
-        query_text = f"name:({query}) rules_text:({query}) flavor_text:({query})"
-        # peform the search
-        results = searcher.search(qparser.parse(query_text))
+    qparser = MultifieldParser(['rules_text', 'name', 'flavor_text'], ix.schema, group = OrGroup if or_group else AndGroup)
+    #qparser = QueryParser('rules_text', ix.schema, group = OrGroup if or_group else AndGroup)
+    #query_text = f"name:({query}) rules_text:({query}) flavor_text:({query})"
+    query = qparser.parse(query)
 
-        # convert whoosh results (which depend on the lifecycle of the searcher)
-        # to another easy-to-use format.
-        sr = search_results.SearchResults(search_results.SearchTypes.Simple, query, results, None)
-
-        return sr
+    from .search_results import SearchDelegate
+    return SearchDelegate(query, None).get_page(page, n)
 
 
 def advanced_query(text_parameters, range_parameters = {}, point_parameters = {}, page = 0, n = 10):

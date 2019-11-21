@@ -3,7 +3,6 @@
 
 import os
 import whoosh
-from . import get_data_location
 
 def make_whoosh_schema():
     """
@@ -13,6 +12,7 @@ def make_whoosh_schema():
           This function exists to create a schema object during
           the creation of the index.
     """
+    from whoosh import fields
     schema = fields.Schema(name = fields.TEXT,
                             rules_text = fields.TEXT,
                             flavor_text = fields.TEXT,
@@ -27,5 +27,6 @@ def get_whoosh_index():
     """
     Locates, loads, and returns the whoosh index bundled with the package installation.
     """
+    from . import get_data_location
     whoosh_path = os.path.join(get_data_location(), 'whoosh_index')
     return whoosh.index.open_dir(whoosh_path)
