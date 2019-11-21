@@ -119,3 +119,7 @@ artwork/*
 
 # Related card cache
 related_cache/*
+
+# corpus data files
+mtg_qe/data/corpus_files/*
+mtg_qe/data/*tar.gz
