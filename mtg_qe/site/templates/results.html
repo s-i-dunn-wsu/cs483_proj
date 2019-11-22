@@ -22,12 +22,12 @@
 <tr>
 <th colspan="2"><h3>Results for "{{ query }}"...</h3></th>
 </tr>
-{% for tuple in result %}
+{% for card in result %}
 <tr>
-<td><img src="images/{{ tuple[2] }}"></td>
+<td><img src="https://gatherer.wizards.com{{ card.external_artwork }}"></td>
 <td valign="top">
-<h3><a href="/cardinfo?cardid={{ tuple[0] }}">{{ tuple[0] }}</a></h3><br/>
-{{ tuple[1] }}
+<h3><a href="/cardinfo?cardid={{ card.multiverseid }}">{{ card.name }}</a></h3><br/>
+{{ card.text }}
 </td>
 </tr>
 {% endfor %}
