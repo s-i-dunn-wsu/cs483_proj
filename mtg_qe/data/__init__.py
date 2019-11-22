@@ -74,8 +74,11 @@ def simple_query(query, or_group=False, page = 0, n = 10):
     #query_text = f"name:({query}) rules_text:({query}) flavor_text:({query})"
     query = qparser.parse(query)
 
-    from .search_results import SearchDelegate
-    return SearchDelegate(query, None).get_page(page, n)
+    with ix.searcher() as searcher:
+        # Quick note: whoosh expects pages to start with 1, so we'll take page+1
+        results = searcher.search_page(query, page+1, pagelen=n)
+        return [x['data_obj'] for x in results]
+
 
 def advanced_query(text_parameters, range_parameters = {}, point_parameters = {}, page = 0, n = 10):
     """
@@ -92,6 +95,11 @@ def advanced_query(text_parameters, range_parameters = {}, point_parameters = {}
     :param int n: the number of results per page.
     :return: Exact class TBD, will provide way to iterate over the page's worth of results.
     """
+
+    # After talking with Ben it sounds like we can do something to the effect
+    # of taking multiple sub queries and perform unions and intersections on their
+    # results
+    # This is going to be the best way to get the desired results.
 
 def find_card_by_multiverseid(multiverseid):
     """
