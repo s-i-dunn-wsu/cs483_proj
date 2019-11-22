@@ -103,13 +103,18 @@ def advanced_query(text_parameters, range_parameters = {}, point_parameters = {}
 
 def find_card_by_multiverseid(multiverseid):
     """
+    Returns the card with matching multiverseid, or None if no match.
+    Note: card printings have a 1 to 1 relationship with multiverseid.
     """
-    return get_internal_index().get(int(multiverseid), None)
+    # Coming out of json all keys will be converted to strings (even if they went in as ints)
+    return get_internal_index()['by_multiverseid'].get(str(multiverseid), None)
 
 def find_card_by_name(name):
     """
+    Returns the card with matching multiverseid, or None if no match.
+    Note: card printings have a many to 1 relationship with name.
     """
-    return get_internal_index().get(name, None)
+    return get_internal_index()['by_name'].get(name, None)
 
 def unpack_archive():
     """

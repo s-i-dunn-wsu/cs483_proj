@@ -40,9 +40,18 @@ def get_internal_index():
     if globals().get('!!_idx_dict', None) == None:
         # load the json file into globals()['!!_idx_dict']
         from . import get_data_location
+        from ..model.card import Card
         import os
         import json
         with open(os.path.join(get_data_location(), 'internal_index.json')) as fd:
-            globals()['!!_idx_dict'] = json.load(fd)
+            deflated_cards = json.load(fd)
+
+        # inflate all cards in the data set.
+        inflated_cards = {'by_name': {}, 'by_multiverseid': {}}
+        for top_level_key in inflated_cards:
+            for key, value in deflated_cards[top_level_key].items():
+                inflated_cards[top_level_key][key] = Card().deserialize(value)
+
+        globals()['!!_idx_dict'] = inflated_cards
 
     return globals().get('!!_idx_dict')
