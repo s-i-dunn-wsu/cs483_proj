@@ -102,19 +102,6 @@ def advanced_query(text_parameters, range_parameters = {}, point_parameters = {}
     # results
     # This is going to be the best way to get the desired results.
 
-    # Note to self: the way to intersect results is with the result's class (whoosh.searching.Results)
-    # .filter method. Which does not update the estimated length, and applies changes
-    # to the results object it is invoked on, rather than providing a new results object.
-
-    # so here's the plan.
-    # we'll start running queries one after the other, updating the first-run
-    # by filtering with the most-recently run. If we hit a scenario where we know
-    # for sure the result set won't have anything in it, we can exit early.
-
-    # by the end of it, we should have the logical intersection of all results.
-
-    # Only drawback is that we'll have to do the paging aspect ourselves.
-
     # to start: build a list of all the query objects we'll be searching.
     query_objs = []
     for field, query_text in text_parameters.items():
@@ -135,6 +122,7 @@ def advanced_query(text_parameters, range_parameters = {}, point_parameters = {}
     query = And(query_objs)
 
     with get_whoosh_index().searcher() as searcher:
+        # run that query and return the appropriate results page.
         results = searcher.search_page(query, page+1, n)
 
         return [x['data_obj'] for x in results]
