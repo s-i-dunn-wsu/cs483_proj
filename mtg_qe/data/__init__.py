@@ -95,11 +95,49 @@ def advanced_query(text_parameters, range_parameters = {}, point_parameters = {}
     :param int n: the number of results per page.
     :return: Exact class TBD, will provide way to iterate over the page's worth of results.
     """
+    schema = get_whoosh_index().schema
 
     # After talking with Ben it sounds like we can do something to the effect
     # of taking multiple sub queries and perform unions and intersections on their
     # results
     # This is going to be the best way to get the desired results.
+
+    # Note to self: the way to intersect results is with the result's class (whoosh.searching.Results)
+    # .filter method. Which does not update the estimated length, and applies changes
+    # to the results object it is invoked on, rather than providing a new results object.
+
+    # so here's the plan.
+    # we'll start running queries one after the other, updating the first-run
+    # by filtering with the most-recently run. If we hit a scenario where we know
+    # for sure the result set won't have anything in it, we can exit early.
+
+    # by the end of it, we should have the logical intersection of all results.
+
+    # Only drawback is that we'll have to do the paging aspect ourselves.
+
+    # to start: build a list of all the query objects we'll be searching.
+    query_objs = []
+    for field, query_text in text_parameters.items():
+        query_objs.append(QueryParser(field, schema).parse(query_text))
+
+    for field, query_range in range_parameters.items():
+        # Not 100% sure how to do this one yet, so leaving it blank.
+        pass
+
+    for field, point_value in point_parameters.items():
+        query_objs.append(QueryParser(field, schema).parse(point_value))
+
+    if not len(query_objs):
+        return []
+
+    # now build a nice big compound query:
+    from whoosh.query import And
+    query = And(query_objs)
+
+    with get_whoosh_index().searcher() as searcher:
+        results = searcher.search_page(query, page+1, n)
+
+        return [x['data_obj'] for x in results]
 
 def find_card_by_multiverseid(multiverseid):
     """
