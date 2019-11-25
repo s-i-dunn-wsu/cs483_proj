@@ -12,15 +12,33 @@
 <body>
 <h1><a href="/">Magic: The Gathering Card Search</a></h1>
 <form action="results" method="GET">
-<input class="searchbar" type="text" name="searchquery" type="text" value="{{ query }}">
+<input class="searchbar" type="text" name="query" type="text" value="{{ query }}">
 <input type="submit" value="Search">
 </form>
 <br/>
 <br/>
+{% if pagenum != 1 %}
+<form action="results" method="GET">
+<input type="submit" value="<">
+<input type="hidden" name="query" value="{{ searchquery }}">
+<input type="hidden" name="page" value="{{ pagenum - 1 }}">
+<input type="hidden" name="results" value="{{ resultsnum }}">
+</form>
+{% endif %}
+{{ pagenum }}
+{% if result|length == resultsnum %}
+<form action="results" method="GET">
+<input type="submit" value=">">
+<input type="hidden" name="query" value="{{ searchquery }}">
+<input type="hidden" name="page" value="{{ pagenum + 1 }}">
+<input type="hidden" name="results" value="{{ resultsnum }}">
+</form>
+{% endif %}
+<br/>
 <div class="results">
 <table align="center">
 <tr>
-<th colspan="2"><h3>Results for "{{ query }}"...</h3></th>
+<th colspan="2"><h3>Results for "{{ searchquery }}"...</h3></th>
 </tr>
 {% for card in result %}
 <tr>
@@ -33,5 +51,15 @@
 {% endfor %}
 </table>
 </div>
+<br/>
+<form action="results" method="GET">
+<input type="submit" name="page" value="{{ pagenum - 1 }}">
+{{ pagenum }}
+<input type="submit" name="page" value="{{ pagenum + 1 }}">
+<input type="hidden" name="query" value="{{ searchquery }}">
+</form>
+<br/>
+<br/>
+<br/>
 </body>
 </html>

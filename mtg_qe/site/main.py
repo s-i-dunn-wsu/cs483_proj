@@ -2,11 +2,6 @@ import os
 import cherrypy
 from jinja2 import Environment, FileSystemLoader
 
-
-corpus = [['Crooked Scales', '4, Tap: Flip a coin. If you win the flip, destroy target creature an opponent controls. If you lose the flip, destroy target creature you control unless you pay 3 and repeat this process.', 'Image.ashx.jpeg'], ['Culling Scales', 'At the beginning of your upkeep, destroy target nonland permanent with the lowest converted mana cost. (If two or more permanents are tied for lowest cost, target any one of them.)', 'Image-1.ashx.jpeg'], ['Dragon Scales', 'Enchanted creature gets +1/+2 and has vigilance. When a creature with converted mana cost 6 or greater enters the battlefield, you may return Dragon Scales from your graveyard to the battlefield attached to that creature.', 'Image-2.ashx.jpeg'], ['Hardened Scales', 'If one or more +1/+1 counters would be put on a creature you control, that many plus one +1/+1 counters are put on it instead.', 'Image.ashx.png'], ['Noetic Scales', 'At the beginning of each players upkeep, return to its owners hand each creature that player controls with power greater than the number of cards in their hand.', 'Image-3.ashx.jpeg']]
-
-card = ['Hardened Scales', 'If one or more +1/+1 counters would be put on a creature you control, that many plus one +1/+1 counters are put on it instead.', 'Image.ashx.png']
-
 simple = 1
 
 class MTGSearch(object):
@@ -28,8 +23,8 @@ class MTGSearch(object):
         return template.render()
 
     @cherrypy.expose
-    def results(self, searchquery):
-        if (searchquery == ''):
+    def results(self, query, page = 1, results = 10):
+        if (query == ''):
             if (simple == 1):
                 raise cherrypy.HTTPRedirect('/')
             else:
@@ -37,12 +32,15 @@ class MTGSearch(object):
 
         # Actually get the results
         from ..data import simple_query
+        
+        page_num = int(page)
+        results_num = int(results)
 
-        results = simple_query(searchquery)
+        data = simple_query(query, False, page_num - 1, results_num)
 
         # incorperate results into template
         template = self.env.get_template('results.html')
-        return template.render(query=searchquery, result=results)
+        return template.render(searchquery=query, result=data, pagenum=page_num, resultsnum=results_num)
 
 
     @cherrypy.expose
