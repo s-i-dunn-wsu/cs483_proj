@@ -37,10 +37,14 @@ class MTGSearch(object):
         results_num = int(results)
 
         data = simple_query(query, False, page_num - 1, results_num)
+        
+        last = 0
+        if (data[0].multiverseid == simple_query(query, False, page_num, results_num)[0].multiverseid):
+            last = 1
 
         # incorperate results into template
         template = self.env.get_template('results.html')
-        return template.render(searchquery=query, result=data, pagenum=page_num, resultsnum=results_num)
+        return template.render(searchquery=query, result=data, pagenum=page_num, resultsnum=results_num, lastpage=last)
 
 
     @cherrypy.expose

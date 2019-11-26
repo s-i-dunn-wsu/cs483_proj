@@ -26,7 +26,7 @@
 </form>
 {% endif %}
 {{ pagenum }}
-{% if result|length == resultsnum %}
+{% if lastpage == 0 %}
 <form action="results" method="GET">
 <input type="submit" value=">">
 <input type="hidden" name="query" value="{{ searchquery }}">
@@ -52,12 +52,23 @@
 </table>
 </div>
 <br/>
+{% if pagenum != 1 %}
 <form action="results" method="GET">
-<input type="submit" name="page" value="{{ pagenum - 1 }}">
-{{ pagenum }}
-<input type="submit" name="page" value="{{ pagenum + 1 }}">
+<input type="submit" value="<">
 <input type="hidden" name="query" value="{{ searchquery }}">
+<input type="hidden" name="page" value="{{ pagenum - 1 }}">
+<input type="hidden" name="results" value="{{ resultsnum }}">
 </form>
+{% endif %}
+{{ pagenum }}
+{% if lastpage == 0 %}
+<form action="results" method="GET">
+<input type="submit" value=">">
+<input type="hidden" name="query" value="{{ searchquery }}">
+<input type="hidden" name="page" value="{{ pagenum + 1 }}">
+<input type="hidden" name="results" value="{{ resultsnum }}">
+</form>
+{% endif %}
 <br/>
 <br/>
 <br/>
