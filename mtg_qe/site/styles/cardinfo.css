@@ -21,10 +21,15 @@ table {
 div.results {
     text-align: left;
 }
+table.related {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+}
 a {
     color: white;
     text-decoration: none;
 }
 a:hover {
-   text-decoration: underline;
+    text-decoration: underline;
 }

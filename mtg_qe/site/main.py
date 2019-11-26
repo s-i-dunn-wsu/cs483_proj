@@ -1,5 +1,6 @@
 import os
 import cherrypy
+from .related_cards import related_cards
 from jinja2 import Environment, FileSystemLoader
 
 simple = 1
@@ -59,8 +60,10 @@ class MTGSearch(object):
 
         else:
             print(f"card.external_artwork: {card.external_artwork}")
+            
+        related = related_cards(card.name, 10)
 
-        return template.render(id=cardid, carddata=card)
+        return template.render(id=cardid, carddata=card, relatedcards=related)
 
 
 def main():
