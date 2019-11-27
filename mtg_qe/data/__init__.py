@@ -80,7 +80,7 @@ def simple_query(query, or_group=False, page = 0, n = 10):
         return [x['data_obj'] for x in results]
 
 
-def advanced_query(text_parameters, range_parameters = {}, point_parameters = {}, page = 0, n = 10):
+def advanced_query(parameters, page = 0, n = 10):
     """
     :param dict text_paramters: a dictionary of field-to-query pairs specifying text-based queries.
         this is good for fields like "rules_text", "name", "flavor_text", etc.
@@ -104,15 +104,20 @@ def advanced_query(text_parameters, range_parameters = {}, point_parameters = {}
 
     # to start: build a list of all the query objects we'll be searching.
     query_objs = []
-    for field, query_text in text_parameters.items():
-        query_objs.append(QueryParser(field, schema).parse(query_text))
+    for field, target in parameters.items():
+        # Coerce potential numeric point queries to whoosh syntax.
+        if isinstance(target, float):
+            target = int(target+0.5)
+        if isinstance(target, int):
+            target = f"{{{target-1} TO {target+1}}}"
 
-    for field, query_range in range_parameters.items():
-        # Not 100% sure how to do this one yet, so leaving it blank.
-        pass
+        # Coerce range queries to whoosh syntax, assume they're inclusive bounds.
+        if isinstance(target, (list, tuple)):
+            if len(target) != 2:
+                raise ValueError(f"Unable to treat parameter as range query! ({target})")
+            target = f"[{target[0]} TO {target[1]}]"
 
-    for field, point_value in point_parameters.items():
-        query_objs.append(QueryParser(field, schema).parse(point_value))
+        query_objs.append(QueryParser(field, schema).parse(target))
 
     if not len(query_objs):
         return []

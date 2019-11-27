@@ -10,7 +10,7 @@ if __name__ == "__main__":
         author_email="samuel.i.dunn@wsu.edu",
         description="magic the gathering card search, for CS483",
         packages=find_packages(),
-        install_requires=['whoosh', 'cherrypy', 'jinja2'],
+        install_requires=['whoosh', 'cherrypy', 'jinja2', 'lxml'],
         entry_points={
             'console_scripts': [
                 'mtg_qe = mtg_qe.site.main:main',

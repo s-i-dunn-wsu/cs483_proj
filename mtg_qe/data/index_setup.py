@@ -50,7 +50,7 @@ class IndexInitializer(object):
 
         def fix_int_vals(n):
             try:
-                None if n is None else int(n)
+                return None if n is None else int(n)
             except Exception:
                 # this is a wild-card value (* is somewhere in there, there are also cards with text like '1+*')
                 return None
@@ -71,14 +71,17 @@ class IndexInitializer(object):
             for serialized_data in set_data:
                 card = Card().deserialize(serialized_data)
                 if card.name not in cards_by_name:
+                    p, t = fix_int_vals(card.power), fix_int_vals(card.toughness)
+                    cmc = fix_int_vals(card.cmc)
                     whoosh_writer.add_document(name=card.name,
                                                rules_text=card.text,
                                                flavor_text=card.flavor,
                                                sets=', '.join(card.other_prints),
                                                types=card.type,
                                                subtypes=card.subtypes,
-                                               power = fix_int_vals(card.power),
-                                               toughness = fix_int_vals(card.toughness),
+                                               power = p, toughness = t,
+                                               cmc = 0 if not cmc else cmc,
+                                               mana_cost = ", ".join(card.mana_cost) if card.mana_cost else None,
                                                legal_formats = ', '.join(card.legal_formats),
                                                data_obj=card)
                     internal_index['by_name'][card.name] = card

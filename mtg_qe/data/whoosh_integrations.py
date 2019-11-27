@@ -21,6 +21,8 @@ def make_whoosh_schema():
                             subtypes = fields.KEYWORD,
                             power = fields.NUMERIC,
                             toughness = fields.NUMERIC,
+                            cmc = fields.NUMERIC,
+                            mana_cost = fields.KEYWORD,
                             legal_formats = fields.KEYWORD,
                             data_obj = fields.STORED)
     return schema
