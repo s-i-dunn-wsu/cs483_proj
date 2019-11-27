@@ -20,6 +20,7 @@ def related_cards(name, amount):
     paths = related_decks(name, 3)
     results = []
     sorted = [[]]
+    # Scrape related cards from tappedout
     if not os.path.exists('../../related_cache'):
         os.mkdir('../../related_cache')
     for path in paths:
@@ -37,6 +38,7 @@ def related_cards(name, amount):
             f.write(html.tostring(source))
             f.close()
         all_related += source.xpath('//div/ul/li/a/@data-orig')
+    # Form 2D array: sorted[occurances][array of card names]
     for i in range(len(all_related)):
         sorted.append([])
     for card in all_related:
@@ -45,9 +47,13 @@ def related_cards(name, amount):
             sorted[all_related.count(card)].append(card)
             if (all_related.count(card) > max):
                 max = all_related.count(card)
+    # Get list of most common occurences
     while (len(results) < amount) & (max > 0):
         if (len(sorted[max]) != 0):
-            results.append(find_card_by_name(sorted[max].pop(random.choice(range(len(sorted[max]))))))
+            new_card = find_card_by_name(sorted[max].pop(random.choice(range(len(sorted[max])))))
+            # Disallow card being related to itself
+            if (new_card != find_card_by_name(name)):
+                results.append(new_card)
         else:
             max -= 1
     return results

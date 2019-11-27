@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" type="text/css" href="styles/results.css">
+<link rel="stylesheet" type="text/css" href="styles/index.css">
 <style>
 @font-face {
     font-family: "Beleren Bold";
@@ -10,14 +10,59 @@
 </style>
 </head>
 <body>
+<br/>
+<br/>
 <h1>Magic: The Gathering Card Search</h1>
-<form action="results" method="GET">
-<input class="searchbar" type="text" name="searchquery" placeholder="Advanced search...">
-<input type="submit" value="Search">
+<form action="/" method="GET">
+    <input type="submit" value="Back to simple...">
 </form>
 <br/>
-<form action="/" method="GET">
-<input type="submit" value="Back to simple...">
+<form action="results" method="GET">
+<table align="center">
+<tr><td>
+<input class="searchbar" type="text" name="searchquery" placeholder="Advanced search...">
+<input type="submit" value="Search">
+<br/>
+</td></tr>
+<tr><td>
+<br/>
+    <div align="left">Expansion:</div>
+<br/>
+<input class="searchbar" type="text" style="width:357px;" name="expansion" placeholder="Any">
+</td></tr>
+<tr><td>
+<br/>
+    <div align="left">Set legality:</div>
+<br/>
+<input class="searchbar" type="text" style="width:357px;" name="legality" placeholder="Any">
+</td></tr>
+<tr><td>
+<br/>
+    <div align="left">Card type:</div>
+<br/>
+<input class="searchbar" type="text" style="width:357px;" name="cardtype" placeholder="Any">
+</td></tr>
+<tr><td>
+<br/>
+    <div align="left">Subtype:</div>
+<br/>
+<input class="searchbar" type="text" style="width:357px;" name="subtype" placeholder="Any">
+</td></tr>
+<tr><td>
+<br/>
+    <div align="left">Color:</div>
+<br/>
+<div align="left"><select name="color">
+  <option value="Any">Any</option>
+  <option value="White">White</option>
+  <option value="Blue">Blue</option>
+  <option value="Black">Black</option>
+  <option value="Red">Red</option>
+  <option value="Green">Green</option>
+  <option value="Colorless">Colorless</option>
+</select></div>
+</td></tr>
+</table>
 </form>
 </body>
 </html>
