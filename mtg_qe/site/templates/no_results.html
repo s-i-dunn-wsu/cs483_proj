@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="styles/results.css">
+<style>
+@font-face {
+    font-family: "Beleren Bold";
+    src:url("fonts/BELEREN-BOLD.woff") format("woff");
+}
+</style>
+</head>
+<body>
+<h1><a href="/">Magic: The Gathering Card Search</a></h1>
+<form action="results" method="GET">
+<input class="searchbar" type="text" name="query" type="text" value="{{ searchquery }}">
+<input type="submit" value="Search">
+</form>
+<br>
+<br>
+<h2>No results found for '{{searchquery}}'</h2>
+</body>
+</html>

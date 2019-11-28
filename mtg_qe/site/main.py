@@ -33,12 +33,15 @@ class MTGSearch(object):
 
         # Actually get the results
         from ..data import simple_query
-        
+
         page_num = int(page)
         results_num = int(results)
 
         data = simple_query(query, False, page_num - 1, results_num)
-        
+        if len(data) == 0:
+            template = self.env.get_template('no_results.html')
+            return template.render(searchquery=query)
+
         last = 0
         if (data[0].multiverseid == simple_query(query, False, page_num, results_num)[0].multiverseid):
             last = 1
@@ -60,7 +63,7 @@ class MTGSearch(object):
 
         else:
             print(f"card.external_artwork: {card.external_artwork}")
-            
+
         related = related_cards(card.name, 10)
 
         return template.render(id=cardid, carddata=card, relatedcards=related)
