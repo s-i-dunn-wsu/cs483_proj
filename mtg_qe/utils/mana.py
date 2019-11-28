@@ -35,7 +35,7 @@ def alt_text_to_curly_bracket(text):
             # Since we're ending up here, and what we're given isn't a color, lets assume its N
             return color
         else:
-            if color.lower == 'blue': return 'U'
+            if color.lower() == 'blue': return 'U'
             else: return color[0].upper()
 
     try:
