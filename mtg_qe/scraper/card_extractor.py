@@ -10,8 +10,10 @@ from bs4 import BeautifulSoup as bs
 
 try:
     from ..model.card import Card
+    from ..utils.mana import replace_mana_links_in_text, alt_text_to_curly_bracket
 except ImportError:
     from mtg_qe.model.card import Card
+    from mtg_qe.utils.mana import replace_mana_links_in_text, alt_text_to_curly_bracket
 
 class ManaTypes(Enum):
     Red = auto()
@@ -105,7 +107,7 @@ class CardExtractor(object):
                         raise
 
         def extract_mana(sub_soup):
-            return [x['alt'] for x in sub_soup.children if not isinstance(x, str)]
+            return [alt_text_to_curly_bracket(x['alt']) for x in sub_soup.children if not isinstance(x, str)]
 
         card = Card()
 
@@ -157,6 +159,7 @@ class CardExtractor(object):
         are adhered to, and mana costs are converted to ascii.
             ex: <green mana symbol> becomes {G}, 4 colorless becomes {4}
         """
+
         # Get the parse node with the data we want.
         id = self.identify_id('textRow')
         try:
@@ -165,19 +168,12 @@ class CardExtractor(object):
             # We'll except here if there is no rules text field.
             return
 
-        # Now, rather than call .getText() on it, we'll
-        # convert it to a string and do a manual parse on it.
-        # Each clause is in its own <div class='cardTextBox'> field
-        # any nested mana costs are <img> tags, as usual.
-        # For the mana costs we'll use regular expression substitution.
-        pattern = r'<\s*img\s.*?alt="(.).*?>'
-
         text_blocks = []
 
         # For the record: this can be done in a single comprehension.
         # A very illegible comprehension ;)
         for subfield in field.find_all('div', class_='cardtextbox'):
-            corrected = re.sub(pattern, r"{\1}", str(subfield))
+            corrected = replace_mana_links_in_text(str(subfield))
 
             # Now we pass the corrected field back into BeautifulSoup
             # (so we can use it to strip out nonsense like styling)

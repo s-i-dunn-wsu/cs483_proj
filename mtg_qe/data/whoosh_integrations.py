@@ -23,6 +23,11 @@ def make_whoosh_schema():
                             toughness = fields.NUMERIC,
                             cmc = fields.NUMERIC,
                             mana_cost = fields.KEYWORD,
+                            white = fields.NUMERIC,
+                            blue = fields.NUMERIC,
+                            black = fields.NUMERIC,
+                            red = fields.NUMERIC,
+                            green = fields.NUMERIC,
                             legal_formats = fields.KEYWORD,
                             data_obj = fields.STORED)
     return schema

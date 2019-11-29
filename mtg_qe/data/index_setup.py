@@ -55,6 +55,13 @@ class IndexInitializer(object):
                 # this is a wild-card value (* is somewhere in there, there are also cards with text like '1+*')
                 return None
 
+        def count_mana_symbols(card):
+            if not card.mana_cost:
+                return 0, 0, 0, 0, 0
+
+            as_str = ''.join(card.mana_cost)
+            return as_str.count('W'), as_str.count('U'), as_str.count('B'), as_str.count('R'),as_str.count('G')
+
         # used to know when we've passed a card quickly. (amortized O(1) if I remember correctly, once its big enough it'll be O(n))
         cards_by_name = set()
 
@@ -73,6 +80,7 @@ class IndexInitializer(object):
                 if card.name not in cards_by_name:
                     p, t = fix_int_vals(card.power), fix_int_vals(card.toughness)
                     cmc = fix_int_vals(card.cmc)
+                    w, u, b, r, g = count_mana_symbols(card)
                     whoosh_writer.add_document(name=card.name,
                                                rules_text=card.text,
                                                flavor_text=card.flavor,
@@ -82,6 +90,7 @@ class IndexInitializer(object):
                                                power = p, toughness = t,
                                                cmc = 0 if not cmc else cmc,
                                                mana_cost = ", ".join(card.mana_cost) if card.mana_cost else None,
+                                               white = w, blue = u, black = b, red = r, green = g,
                                                legal_formats = ', '.join(card.legal_formats),
                                                data_obj=card)
                     internal_index['by_name'][card.name] = card
