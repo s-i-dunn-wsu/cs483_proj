@@ -1,99 +1,105 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Advanced Search</title>
-    <link rel="stylesheet" type="text/css" href="styles/index.css">
-    <style>
-        @font-face {
-            font-family: "Beleren Bold";
-            src:url("fonts/BELEREN-BOLD.woff") format("woff");
-        }
-    </style>
-    <script src="/scripts/sanitize_query_text.js"></script>
-    <script src="/scripts/adv_search.js"></script>
-</head>
-<body onload="applyAdvancedSanitizer()">
-    <br/>
-    <br/>
-    <h1>Magic: The Gathering Card Search</h1>
-    <form action="/" method="GET">
-        <input type="submit" value="Back to simple...">
-    </form>
-    <br/>
-
-    <form id="primaryForm" action="advanced_results" method="GET">
-        <input type="submit" value="Search">
-        <table align="center">
-            <tr><td>
-            <br/>
-                <div align="left">Name:</div>
-            <br/>
-            <input class="searchbar" type="text" style="width:357px;" name="name" placeholder="Any">
-            </td></tr>
-            <tr><td>
-            <br/>
-                <div align="left">Rules Text:</div>
-            <br/>
-            <input class="searchbar" type="text" style="width:357px;" name="rules_text" placeholder="Any">
-            </td></tr>
-            <tr><td>
-            <br/>
-                <div align="left">Flavor Text:</div>
-            <br/>
-            <input class="searchbar" type="text" style="width:357px;" name="flavor_text" placeholder="Any">
-            </td></tr>
-            <tr><td>
-            <br/>
-                <div align="left">Expansion:</div>
-                <select name="expansions">
-                    <option value="">Any</option>
-                    {% for expansion in expansion_list %}
-                    <option value="{{ expansion }}">{{ expansion }}</option>
-                    {% endfor %}
-                </select>
-            </td></tr>
-            <tr><td>
-            <br/>
-                <div align="left">Set legality:</div>
-                <select name="format">
-                    <option value="">Any</option>
-                    {% for format in format_list %}
-                    <option value="{{ format }}">{{ format }}</option>
-                    {% endfor %}
-                </select>
-            </td></tr>
-            <tr><td>
-            <br/>
-                <div align="left">Card type:</div>
-                <select name="type">
-                    <option value="">Any</option>
-                    {% for type in type_list %}
-                    <option value="{{ type }}">{{ type }}</option>
-                    {% endfor %}
-                </select>
-            </td></tr>
-            <tr><td>
-            <br/>
-                <div align="left">Subtype(s):</div>
-            <br/>
-            <input class="searchbar" type="text" style="width:357px;" name="subtype" placeholder="Any">
-            </td></tr>
-            <tr><td>
-            <br/>
-                <div align="left">Color:</div>
-            <br/>
-            <div align="left"><select name="color">
-            <option value="">Any</option>
-            <option value="White">White</option>
-            <option value="Blue">Blue</option>
-            <option value="Black">Black</option>
-            <option value="Red">Red</option>
-            <option value="Green">Green</option>
-            <option value="Colorless">Colorless</option>
-            </select></div>
-            </td></tr>
-        </table>
-        <input type="submit" value="Search">
-    </form>
-</body>
+    <head>
+        <title>Advanced Search</title>
+        <link rel="stylesheet" type="text/css" href="styles/index.css">
+            <style>
+                @font-face {
+                    font-family: "Beleren Bold";
+                    src:url("fonts/BELEREN-BOLD.woff") format("woff");
+                }
+            </style>
+            <script src="/scripts/sanitize_query_text.js"></script>
+            <script src="/scripts/adv_search.js"></script>
+    </head>
+    <body onload="applyAdvancedSanitizer()">
+        <br/>
+        <br/>
+        <h1>Magic: The Gathering Card Search</h1>
+        <form action="/" method="GET">
+            <input type="submit" value="Back to simple...">
+        </form>
+        <br/>
+        
+        <form id="primaryForm" action="advanced_results" method="GET">
+            <input type="submit" value="Search">
+                <table align="center">
+                    <tr><td>
+                        <br/>
+                        <div align="left">Name:</div>
+                        <br/>
+                        <input class="searchbar" type="text" style="width:357px;" name="name" placeholder="Any">
+                    </td></tr>
+                    <tr><td>
+                        <br/>
+                        <div align="left">Rules Text:</div>
+                        <br/>
+                        <input class="searchbar" type="text" style="width:357px;" name="rules_text" placeholder="Any">
+                    </td></tr>
+                    <tr><td>
+                        <br/>
+                        <div align="left">Flavor Text:</div>
+                        <br/>
+                        <input class="searchbar" type="text" style="width:357px;" name="flavor_text" placeholder="Any">
+                    </td></tr>
+                    <tr><td>
+                        <br/>
+                        <div align="left">Expansion:</div>
+                        <br/>
+                        <div align="left"><select name="expansions">
+                            <option value="">Any</option>
+                            {% for expansion in expansion_list %}
+                            <option value="{{ expansion }}">{{ expansion }}</option>
+                            {% endfor %}
+                        </select></div>
+                    </td></tr>
+                    <tr><td>
+                        <br/>
+                        <div align="left">Set legality:</div>
+                        <br/>
+                        <div align="left"><select name="format">
+                            <option value="">Any</option>
+                            {% for format in format_list %}
+                            <option value="{{ format }}">{{ format }}</option>
+                            {% endfor %}
+                        </select></div>
+                    </td></tr>
+                    <tr><td>
+                        <br/>
+                        <div align="left">Card type:</div>
+                        <br/>
+                        <div align="left"><select name="type">
+                            <option value="">Any</option>
+                            {% for type in type_list %}
+                            <option value="{{ type }}">{{ type }}</option>
+                            {% endfor %}
+                        </select></div>
+                    </td></tr>
+                    <tr><td>
+                        <br/>
+                        <div align="left">Subtype(s):</div>
+                        <br/>
+                        <input class="searchbar" type="text" style="width:357px;" name="subtype" placeholder="Any">
+                    </td></tr>
+                    <tr><td>
+                        <br/>
+                        <div align="left">Color:</div>
+                        <br/>
+                        <div align="left"><select name="color">
+                            <option value="">Any</option>
+                            <option value="White">White</option>
+                            <option value="Blue">Blue</option>
+                            <option value="Black">Black</option>
+                            <option value="Red">Red</option>
+                            <option value="Green">Green</option>
+                            <option value="Colorless">Colorless</option>
+                        </select></div>
+                    </td></tr>
+                </table>
+                <input type="submit" value="Search">
+        </form>
+        <br/>
+        <br/>
+        <br/>
+    </body>
 </html>
