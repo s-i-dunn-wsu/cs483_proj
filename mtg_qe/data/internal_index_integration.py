@@ -48,10 +48,13 @@ def get_internal_index():
 
         # inflate all cards in the data set.
         inflated_cards = {'by_name': {}, 'by_multiverseid': {}}
-        for top_level_key in inflated_cards:
+        for top_level_key in inflated_cards: # there are non-card fields in internal_index, so iter over inflated_cads
             for key, value in deflated_cards[top_level_key].items():
                 inflated_cards[top_level_key][key] = Card().deserialize(value)
 
-        globals()['!!_idx_dict'] = inflated_cards
+        # push the inflated cards into the dict with non-card fields.
+        deflated_cards.update(inflated_cards)
+        # Set the global value:
+        globals()['!!_idx_dict'] = deflated_cards
 
     return globals().get('!!_idx_dict')

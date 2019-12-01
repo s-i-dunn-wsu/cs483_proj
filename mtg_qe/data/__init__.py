@@ -59,6 +59,30 @@ def get_internal_index():
     """
     return internal_index_integration.get_internal_index()
 
+def get_all_formats():
+    """
+    Returns a alpabetized tuple of all playable formats as discovered while scraping
+    """
+    return tuple(get_internal_index()['formats'])
+
+def get_all_sets():
+    """
+    Returns an alphabetized tuple of all expansions discovered while scraping.
+    """
+    return tuple(get_internal_index()['expansions'])
+
+def get_all_card_types():
+    """
+    Returns an alphabetized tuple of all card types discovered while scraping
+    """
+    return tuple(get_internal_index()['types'])
+
+def get_all_card_subtypes():
+    """
+    Returns an alphabetized tuple of all card sub types discovered while scraping
+    """
+    return tuple(get_internal_index()['subtypes'])
+
 def simple_query(query, or_group=False, page = 0, n = 10):
     """
     Performs a simple keyword query using `query` through whoosh. This, by default, will look at all 3 major text based fields. (name, rules text, flavor text.)
@@ -72,7 +96,7 @@ def simple_query(query, or_group=False, page = 0, n = 10):
     qparser = MultifieldParser(['rules_text', 'name', 'flavor_text'], ix.schema, group = OrGroup if or_group else AndGroup)
     #qparser = QueryParser('rules_text', ix.schema, group = OrGroup if or_group else AndGroup)
     #query_text = f"name:({query}) rules_text:({query}) flavor_text:({query})"
-    query = qparser.parse(query)
+    query = qparser.parse(query.lower()) # all text fields are lowered in whoosh, so do same here
 
     with ix.searcher() as searcher:
         # Quick note: whoosh expects pages to start with 1, so we'll take page+1
@@ -115,9 +139,9 @@ def advanced_query(parameters, page = 0, n = 10):
         if isinstance(target, (list, tuple)):
             if len(target) != 2:
                 raise ValueError(f"Unable to treat parameter as range query! ({target})")
-            target = f"[{target[0]} TO {target[1]}]"
+            target = f"[{target[0] if target[0] != -1 else ''} TO {target[1] if target[1] != -1 else ''}]"
 
-        query_objs.append(QueryParser(field, schema).parse(target))
+        query_objs.append(QueryParser(field, schema).parse(target.lower())) # again, lower capitalization on everything
 
     if not len(query_objs):
         return []

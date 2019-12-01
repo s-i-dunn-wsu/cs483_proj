@@ -16,9 +16,9 @@ def make_whoosh_schema():
     schema = fields.Schema(name = fields.TEXT,
                             rules_text = fields.TEXT,
                             flavor_text = fields.TEXT,
-                            sets = fields.KEYWORD,
-                            types = fields.KEYWORD,
-                            subtypes = fields.KEYWORD,
+                            sets = fields.KEYWORD(stored=True),
+                            types = fields.KEYWORD(stored=True),
+                            subtypes = fields.KEYWORD(stored=True),
                             power = fields.NUMERIC,
                             toughness = fields.NUMERIC,
                             cmc = fields.NUMERIC,
@@ -28,7 +28,7 @@ def make_whoosh_schema():
                             black = fields.NUMERIC,
                             red = fields.NUMERIC,
                             green = fields.NUMERIC,
-                            legal_formats = fields.KEYWORD,
+                            legal_formats = fields.KEYWORD(stored=True),
                             data_obj = fields.STORED)
     return schema
 
