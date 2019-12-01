@@ -124,17 +124,22 @@ def main():
     conf = {
         '/styles': {
             'tools.staticdir.on': True,
-            'tools.staticdir.dir': os.path.join(os.path.abspath(os.getcwd()), 'styles')
+            'tools.staticdir.dir': os.path.join(here, 'styles')
         },
         '/images': {
             'tools.staticdir.on': True,
-            'tools.staticdir.dir': os.path.join(os.path.abspath(os.getcwd()), 'images')
+            'tools.staticdir.dir': os.path.join(here, 'images')
         },
         '/fonts': {
             'tools.staticdir.on': True,
-            'tools.staticdir.dir': os.path.join(os.path.abspath(os.getcwd()), 'fonts')
+            'tools.staticdir.dir': os.path.join(here, 'fonts')
+        },
+        "/scripts": {
+            "tools.staticdir.on": True,
+            "tools.staticdir.dir": os.path.join(here, "js_scripts")
         }
     }
+
     try:
         cherrypy.quickstart(MTGSearch(env), '/', conf)
     except Exception as e:

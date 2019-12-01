@@ -9,8 +9,10 @@
             src:url("fonts/BELEREN-BOLD.woff") format("woff");
         }
     </style>
+    <script src="/scripts/sanitize_query_text.js"></script>
+    <script src="/scripts/adv_search.js"></script>
 </head>
-<body>
+<body onload="applyAdvancedSanitizer()">
     <br/>
     <br/>
     <h1>Magic: The Gathering Card Search</h1>
@@ -19,7 +21,7 @@
     </form>
     <br/>
 
-    <form action="advanced_results" method="GET">
+    <form id="primaryForm" action="advanced_results" method="GET">
         <input type="submit" value="Search">
         <table align="center">
             <tr><td>

@@ -8,11 +8,13 @@
     src:url("fonts/BELEREN-BOLD.woff") format("woff");
 }
 </style>
+<script src="/scripts/sanitize_query_text.js"></script>
+<script src="/scripts/simple_input.js"></script>
 </head>
-<body>
+<body onload="applySimpleInputSanitizer()">
 <h1><a href="/">Magic: The Gathering Card Search</a></h1>
-<form action="results" method="GET">
-<input class="searchbar" type="text" name="query" type="text" value="{{ searchquery }}">
+<form id="searchForm" action="results" method="GET">
+<input id = "searchInput" class="searchbar" type="text" name="query" type="text" value="{{ searchquery }}">
 <input type="submit" value="Search">
 </form>
 <br>

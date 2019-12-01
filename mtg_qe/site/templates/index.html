@@ -8,8 +8,10 @@
     src:url("fonts/BELEREN-BOLD.woff") format("woff");
 }
 </style>
+<script src="/scripts/sanitize_query_text.js"></script>
+<script src="/scripts/simple_input.js"></script>
 </head>
-<body>
+<body onload="applySimpleInputSanitizer()">
     <br/>
     <br/>
 <h1>Magic: The Gathering Card Search</h1>
@@ -17,10 +19,10 @@
     <input type="submit" value="Advanced...">
 </form>
 <br/>
-<form action="results" method="GET">
+<form id="searchForm" action="results" method="GET">
 <table align="center">
 <tr><td>
-<input class="searchbar" type="text" name="query" placeholder="Search...">
+<input id="searchInput" class="searchbar" type="text" name="query" placeholder="Search...">
 <input type="submit" value="Search">
 </td></tr>
 </table>
