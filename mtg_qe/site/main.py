@@ -2,6 +2,7 @@ import os
 import cherrypy
 from .related_cards import related_cards
 from jinja2 import Environment, FileSystemLoader
+import json
 
 simple = 1
 
@@ -19,9 +20,55 @@ class MTGSearch(object):
     @cherrypy.expose
     def advanced(self):
         global simple
+        from .. import data
+
         simple = 0
         template = self.env.get_template('advanced.html')
-        return template.render()
+        return template.render(expansion_list = data.get_all_sets(),
+                               format_list = data.get_all_formats(),
+                               type_list = data.get_all_card_types())
+
+    @cherrypy.expose
+    def advanced_results(self, page=1, results = 10, **params):
+        # need to bridge the keys and values to how advanced_query will expect them.
+        # lets start by filtering out empty fields, and converting keys as we go
+
+        # this dict maps keys as they come in through `params` to how advanced_query will
+        # align them to the whoosh schema:
+        conversions = {
+            'type': 'types',
+            'subtype': 'subtypes',
+            'format': 'legal_formats',
+
+        }
+
+        # now filter results, converting to the expected key if possible
+        params = {conversions.get(k, k): v for k, v in params.items() if v}
+
+        # now lets handle some special cases:
+        # 'color' may be in the parameters.
+        # if it is, we want to search for only cards of that color type:
+        # this will be cards with at least one matching mana symbol.
+        # so:
+        if 'color' in params:
+            required_color = params['color']
+            del params['color'] # remove 'color' field
+            params[required_color.lower()] = [1, -1] # advanced_query treats -1 as infinity ()
+
+        # now we pass off to the query method:
+        from ..data import advanced_query
+        search_results = advanced_query(params, int(page) - 1, results)
+
+        if len(search_results) == 0:
+            template = self.env.get_template('no_results.html')
+            return template.render(searchquery=str(params))
+
+        last_page = search_results[0].multiverseid == advanced_query(params, int(page), results)[0].multiverseid
+        # if (data[0].multiverseid == simple_query(query, False, page_num, results_num)[0].multiverseid)
+
+        template = self.env.get_template('results.html')
+        return template.render(searchquery=str(params), result=search_results, pagenum=page, resultsnum=results, lastpage=1 if last_page else 0)
+
 
     @cherrypy.expose
     def results(self, query, page = 1, results = 10):
