@@ -93,9 +93,9 @@ def simple_query(query, or_group=False, page = 0, n = 10):
     :return: Exact class TBD, will provide way to iterate over the page's worth of results.
     """
     ix = get_whoosh_index()
-    qparser = MultifieldParser(['rules_text', 'name', 'flavor_text'], ix.schema, group = OrGroup if or_group else AndGroup)
-    #qparser = QueryParser('rules_text', ix.schema, group = OrGroup if or_group else AndGroup)
-    #query_text = f"name:({query}) rules_text:({query}) flavor_text:({query})"
+    # parse against the main text fields (note: subtypes is here to help aid in "tribe" searches, and boost planeswalker results)
+    qparser = MultifieldParser(['rules_text', 'name', 'flavor_text', 'subtypes'], ix.schema, group = OrGroup if or_group else AndGroup)
+
     query = qparser.parse(query.lower()) # all text fields are lowered in whoosh, so do same here
 
     with ix.searcher() as searcher:
