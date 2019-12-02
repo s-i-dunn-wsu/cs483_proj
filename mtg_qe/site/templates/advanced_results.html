@@ -13,12 +13,7 @@
     </head>
     <body onload="applySimpleInputSanitizer()">
     <h1><a href="/">Magic: The Gathering Card Search</a></h1>
-    <form id="searchForm" action="results" method="GET">
-    <input id = "searchInput" class="searchbar" type="text" name="query" type="text" value="{{ query }}">
-    <input type="submit" value="Search">
-    </form>
-    <br/>
-    <br/>
+
     {% if pagenum != 1 %}
     <form action="advanced_results" method="GET">
     <input type="submit" value="<">
