@@ -7,6 +7,9 @@
     font-family: "Beleren Bold";
     src:url("fonts/BELEREN-BOLD.woff") format("woff");
 }
+td {
+    vertical-align: top;
+}
 </style>
 </head>
 <body>
@@ -18,23 +21,66 @@
             <th colspan="2"><h2>Card Details</h2></th>
         </tr>
         <tr>
-            <td><img src="{{ artwork }}"></td>
+            <td style="vertical-align: top;"><img src="{{ artwork }}"></td>
             <td valign="top">
-                <b>Card Name:</b> {{ carddata.name }}<br/>
-                <b>Mana Cost:</b> {{ carddata.mana_cost }}<br/><br/>
-                <b>Card Rules Text:</b> {{ carddata.text.replace('\n', '<br>') }}<br/>
-                {% if carddata.flavor %}
-                <b>Card Flavor Text:</b> {{ carddata.flavor }}<br/>
+                <table>
+                    <tr>
+                        <td><b>Card Name:</b></td>
+                        <td>{{ carddata.name }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Mana Cost:</b></td>
+                        <td>{{ carddata.mana_cost }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Type Info:</b></td>
+                        <td>{{ carddata.type }}</td>
+                    </tr>
+                {% if carddata.subtypes %}
+                    <tr>
+                        <td><b>Subtype Info</b></td>
+                        <td>{{ carddata.subtypes }}</td>
+                    </tr>
                 {% endif %}
-
-                <b>Printing Information:</b>
-                <ul>
-                    {% for printing in carddata.other_prints %}
-                    <li>
-                        <a href="/cardinfo?cardid={{carddata.other_prints[printing]}}">{{ printing }}</a>
-                    </li>
-                    {% endfor %}
-                </ul>
+                {% if carddata.power and carddata.toughness %}
+                    <tr>
+                        <td><b>P/T:</b></td>
+                        <td>{{ carddata.power }} / {{ carddata.toughness }}</td>
+                    </tr>
+                {% endif %}
+                {% if carddata.text %}
+                    <tr>
+                        <td><b>Card Rules Text:</b></td>
+                        <td>{{ carddata.text.replace('\n', '<br>') }}</td>
+                    </tr>
+                {% endif %}
+                {% if carddata.flavor %}
+                    <tr>
+                        <td><b>Card Flavor Text:</b></td>
+                        <td>{{ carddata.flavor }}</td>
+                    </tr>
+                {% endif %}
+                    <tr>
+                        <td><b>Printing Information:</b></td>
+                        <td><ul>
+                            {% for printing in carddata.other_prints %}
+                            <li>
+                                <a href="/cardinfo?cardid={{carddata.other_prints[printing]}}">{{ printing }}</a>
+                            </li>
+                            {% endfor %}
+                        </ul></td>
+                    </tr>
+                    <tr>
+                        <td><b>Legal Formats:</b></td>
+                        <td><ul>
+                            {% for format in carddata.legal_formats %}
+                            <li>
+                                {{ format }}
+                            </li>
+                            {% endfor %}
+                        </ul></td>
+                    </tr>
+                </table>
             </td>
         </tr>
         <tr>
