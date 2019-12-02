@@ -33,10 +33,14 @@ def related_cards(name, amount):
             f.close()
         else:
             print('Cache does not exist')
-            source = get_html(site + path)
-            f = open(local_path, 'wb')
-            f.write(html.tostring(source))
-            f.close()
+            try:
+                source = get_html(site + path)
+            except requests.exceptions.ConnectionError:
+                return []
+            else:
+                f = open(local_path, 'wb')
+                f.write(html.tostring(source))
+                f.close()
         all_related += source.xpath('//div/ul/li/a/@data-orig')
     # Form 2D array: sorted[occurances][array of card names]
     for i in range(len(all_related)):
@@ -49,6 +53,8 @@ def related_cards(name, amount):
                 max = all_related.count(card)
     # Get list of most common occurences
     while (len(results) < amount) & (max > 0):
+        if sorted == [[]]:
+            return []
         if (len(sorted[max]) != 0):
             new_card_name = sorted[max].pop(random.choice(range(len(sorted[max]))))
             new_card = find_card_by_name(new_card_name)
@@ -64,8 +70,12 @@ def related_cards(name, amount):
 
 def related_decks(name, decks):
     url = site + '/mtg-decks/search/?q=' + name
-    source = get_html(url)
-    return source.xpath('//div/h3/a/@href')[:decks]
+    try:
+        source = get_html(url)
+    except requests.exceptions.ConnectionError:
+        return []
+    else:
+        return source.xpath('//div/h3/a/@href')[:decks]
 
 if __name__ == '__main__':
     related_cards('The Great Henge', 5)

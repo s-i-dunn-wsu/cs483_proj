@@ -87,6 +87,15 @@ td {
             <th colspan="2"><h2><br/>Related Cards</h2></th>
         </tr>
 </table>
+{% if relatedcards == [] %}
+<table align="center">
+    <tr>
+        <td>
+            Could not get related cards from tappedout
+        </td>
+    </tr>
+</table>
+{% else %}
 <table class="related" align="center">
     <tr>
         {% for card in relatedcards %}
@@ -104,6 +113,7 @@ td {
         </td>
     </tr>
 </table>
+{% endif %}
 <br/>
 <br/>
 <br/>
