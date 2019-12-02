@@ -10,6 +10,13 @@ class MTGSearch(object):
     def __init__(self, env_obj):
         self.env = env_obj
 
+        # Associate error handlers:
+        cherrypy.config.update({'error_page.404':self.on_404})
+
+    def on_404(self, status, message, traceback, version):
+        template = self.env.get_template('error_404.html')
+        return template.render()
+
     @cherrypy.expose
     def index(self):
         global simple
@@ -102,6 +109,7 @@ class MTGSearch(object):
 
         if card is None:
             print(f"Failed to find card D: ({repr(cardid)})")
+            raise cherrypy.HTTPError(404)
 
         else:
             print(f"card.external_artwork: {card.external_artwork}")
@@ -190,7 +198,7 @@ def main():
         "/scripts": {
             "tools.staticdir.on": True,
             "tools.staticdir.dir": os.path.join(here, "js_scripts")
-        }
+        },
     }
 
     try:
