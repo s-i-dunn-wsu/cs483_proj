@@ -52,7 +52,7 @@ def related_cards(name, amount):
         if (len(sorted[max]) != 0):
             new_card = find_card_by_name(sorted[max].pop(random.choice(range(len(sorted[max])))))
             # Disallow card being related to itself
-            if (new_card != find_card_by_name(name)):
+            if (new_card != find_card_by_name(name) and new_card.name not in ['Mountain', 'Island', 'Plains', 'Forest', 'Swamp']):
                 results.append(new_card)
         else:
             max -= 1
