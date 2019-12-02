@@ -5,12 +5,12 @@ if __name__ == "__main__":
 
     setup(
         name="mtg_qe",
-        version="0.1.0",
+        version="0.1.1",
         author="Noah Scarbrough, Samuel Dunn",
         author_email="samuel.i.dunn@wsu.edu",
         description="magic the gathering card search, for CS483",
         packages=find_packages(),
-        install_requires=['whoosh', 'cherrypy', 'jinja2', 'lxml'],
+        install_requires=['whoosh', 'cherrypy', 'jinja2', 'lxml', 'requests'],
         entry_points={
             'console_scripts': [
                 'mtg_qe = mtg_qe.site.main:main',
@@ -20,7 +20,12 @@ if __name__ == "__main__":
             ]
         },
         package_data={
-            'mtg_qe.data': ['corpus_files/*']
+            'mtg_qe.data': ['*.tar.gz'],
+            'mtg_qe.site': ['templates/*',
+                            'styles/*',
+                            'js_scripts/*',
+                            'images/*',
+                            'fonts/*']
         },
         setup_requires=['wheel']
     )
