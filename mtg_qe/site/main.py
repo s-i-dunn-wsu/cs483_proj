@@ -168,7 +168,7 @@ class MTGSearch(object):
         # Lastly: we perform essentially the same steps with power/toughness (we just don't care for 'is_[power/toughness])
         # so to preserve DRY we'll just check for them in the same loop. the first 'if' block will never evaluate to true for
         # these two fields, but the remaining clauses are fine.
-        for color in ('white', 'blue', 'red', 'black', 'green', 'power', 'toughness'):
+        for color in ('white', 'blue', 'red', 'black', 'green', 'power', 'toughness', 'cmc'):
             # First check if 'is_{color}' is present.
             key = f'is_{color}'
             if key in new_params:
