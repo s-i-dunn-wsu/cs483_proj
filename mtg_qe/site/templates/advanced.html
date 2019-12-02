@@ -90,7 +90,15 @@
                     {% endfor %}
                 </select></td>
             </tr>
-
+            <tr>
+                    <td><div align="left">Secondary Type:</div></td>
+                    <td><select name="type" style="width:100%;">
+                        <option value="">Any</option>
+                        {% for type in type_list %}
+                        <option value="{{ type }}">{{ type }}</option>
+                        {% endfor %}
+                    </select></td>
+                </tr>
             <tr>
                 <td><div align="left">Subtype(s):</div></td>
                 <td><input class="searchbar" type="text" style="width:357px;" name="subtype" placeholder="Any"></td>

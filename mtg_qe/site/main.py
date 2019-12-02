@@ -158,6 +158,13 @@ class MTGSearch(object):
             if b in new_params:
                 del new_params[b]
 
+        # next: since there are two 'types' input fields, they get provided as a list
+        # however, we want them as a comma or space separated string.
+        if 'types' in new_params:
+            if any(new_params['types']):
+                new_params['types'] = " ".join([x for x in new_params['types'] if x])
+            else:
+                del new_params['types']
         # Return the tweaked content
         return new_params
 
