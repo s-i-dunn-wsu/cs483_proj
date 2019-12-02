@@ -73,6 +73,9 @@ class Agent(object):
                 # No more tasks.
                 logging.getLogger('Agent').debug("no more tasks for agent")
                 return
+            except Exception:
+                self.task_complete(Coordinator.task_incomplete)
+                continue # something went wrong while prepping, mark the task as incomplete and move on.
 
             # Start building output for the task.
             output = []

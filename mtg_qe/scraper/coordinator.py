@@ -104,7 +104,7 @@ class Coordinator(object):
 
     def task_complete(self, set_name, regulator, data):
         # Called at the end of a worker threads task to signal the task is done
-        # Dump ata to an intermediate file. data is presumably a dictionary or list of some kind
+        # Dump data to an intermediate file. data is presumably a dictionary or list of some kind
         # containing model.Card objects.
         # Since we don't (yet) know the exact layout, let's use a custom json encoder.
         if data is not Coordinator.task_incomplete:

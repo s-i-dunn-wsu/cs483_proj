@@ -146,6 +146,7 @@ class SetAgent(Agent):
 
                     # And the last order of business:
                     # download and save the image for this card.
+
                     art_path = os.path.join(Coordinator.intermediates_dir, 'artwork', card.local_artwork)
                     try:
                         os.makedirs(os.path.dirname(art_path))
