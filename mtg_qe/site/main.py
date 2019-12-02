@@ -69,7 +69,9 @@ class MTGSearch(object):
 
         # inflate and return the template.
         template = self.env.get_template('advanced_results.html')
-        return template.render(searchquery=json.dumps(params), result=search_results, pagenum=page, resultsnum=results, lastpage=1 if last_page else 0)
+        return template.render(searchquery=json.dumps(params), result=search_results,
+                               pagenum=page, resultsnum=results, lastpage=1 if last_page else 0,
+                               art_locator=self._locate_art_for_card)
 
 
     @cherrypy.expose
@@ -116,7 +118,21 @@ class MTGSearch(object):
 
         related = related_cards(card.name, 10)
 
-        return template.render(id=cardid, carddata=card, relatedcards=related)
+        return template.render(id=cardid, carddata=card, relatedcards=related, artwork=self._locate_art_for_card(card))
+
+    def _locate_art_for_card(self, card):
+        """
+        Determines if we have local artwork loaded for this card, if we do it provides a link to that
+        if not, it will provide an external link to the cards artwork.
+        """
+        from ..data import get_data_location
+        local_path = os.path.join(get_data_location(), 'artwork', card.local_artwork)
+        if os.path.exists(local_path):
+            return '/'.join(['/card_art', card.local_artwork])
+
+        else:
+            return "https://gatherer.wizards.com" + card.external_artwork
+
 
     def _tweak_adv_params(self, params):
         # need to bridge the keys and values to how advanced_query will expect them.
@@ -178,6 +194,7 @@ class MTGSearch(object):
 
 
 def main():
+    from ..data import get_data_location
     here = os.path.dirname(os.path.abspath(__file__))
     old = os.getcwd()
     os.chdir(here)
@@ -199,6 +216,10 @@ def main():
             "tools.staticdir.on": True,
             "tools.staticdir.dir": os.path.join(here, "js_scripts")
         },
+        "/card_art": {
+            "tools.staticdir.on": True,
+            "tools.staticdir.dir": os.path.join(get_data_location(), 'artwork')
+        }
     }
 
     try:
