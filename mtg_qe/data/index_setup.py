@@ -92,6 +92,7 @@ class IndexInitializer(object):
                     subtypes = card.subtypes.lower() if card.subtypes else None
                     rules_text = card.text.lower() if card.text else None
                     flavor = card.flavor.lower() if card.flavor else None
+
                     # shove everything into whoosh
                     whoosh_writer.add_document(name=card.name.lower(),
                                                rules_text=rules_text,
@@ -105,6 +106,8 @@ class IndexInitializer(object):
                                                white = w, blue = u, black = b, red = r, green = g,
                                                legal_formats = ', '.join(card.legal_formats).lower(),
                                                data_obj=card)
+
+                    # add to internal index and update card_by_name
                     internal_index['by_name'][card.name] = card
                     cards_by_name.add(card.name)
 
@@ -119,7 +122,7 @@ class IndexInitializer(object):
                         metadata['subtypes'].update([x.strip() for x in card.subtypes.split()])
                     metadata['formats'].update(card.legal_formats)
 
-
+                # Add all cards, regardless of name, to the 'by_multiverseid' section.
                 internal_index['by_multiverseid'][card.multiverseid] = card
 
         # write both indexes to disk.

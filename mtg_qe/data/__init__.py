@@ -134,12 +134,16 @@ def advanced_query(parameters, page = 0, n = 10):
             target = int(target+0.5)
         if isinstance(target, int):
             target = f"{{{target-1} TO {target+1}}}"
+            target = target.replace("[ TO", "[TO").replace("TO ]", "TO]")
 
         # Coerce range queries to whoosh syntax, assume they're inclusive bounds.
         if isinstance(target, (list, tuple)):
             if len(target) != 2:
                 raise ValueError(f"Unable to treat parameter as range query! ({target})")
             target = f"[{target[0] if target[0] != -1 else ''} TO {target[1] if target[1] != -1 else ''}]"
+
+            # whoosh has issues if there's an open ended range with a space separating TO from the bracket:
+            target = target.replace("[ TO", "[TO").replace("TO ]", "TO]")
 
         query_objs.append(QueryParser(field, schema).parse(target.lower())) # again, lower capitalization on everything
 
