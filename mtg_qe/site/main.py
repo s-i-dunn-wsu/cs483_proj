@@ -99,7 +99,9 @@ class MTGSearch(object):
 
         # incorperate results into template
         template = self.env.get_template('results.html')
-        return template.render(searchquery=query, result=data, pagenum=page_num, resultsnum=results_num, lastpage=last)
+        return template.render(searchquery=query, result=data,
+                               pagenum=page_num, resultsnum=results_num,
+                               lastpage=last, art_locator=self._locate_art_for_card)
 
 
     @cherrypy.expose
