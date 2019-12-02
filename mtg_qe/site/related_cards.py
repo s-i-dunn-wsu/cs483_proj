@@ -21,11 +21,11 @@ def related_cards(name, amount):
     results = []
     sorted = [[]]
     # Scrape related cards from tappedout
-    if not os.path.exists('../../related_cache'):
-        os.mkdir('../../related_cache')
+    if not os.path.exists(os.path.dirname(__file__) + '/../data/related_cache'):
+        os.mkdir(os.path.dirname(__file__) + '/../data/related_cache')
     for path in paths:
         deck_name = path.split('/')[len(path.split('/')) - 2]
-        local_path ='../../related_cache/' + deck_name + '.html'
+        local_path = os.path.dirname(__file__) + '/../data/related_cache/' + deck_name + '.html'
         if os.path.exists(local_path):
             print('Cache exists')
             f = open(local_path)

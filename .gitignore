@@ -118,7 +118,7 @@ artwork/*
 .DS_Store
 
 # Related card cache
-related_cache/*
+mtg_qe/data/related_cache
 
 # corpus data files
 mtg_qe/data/corpus_files/*
