@@ -151,8 +151,10 @@ class Card(object):
         if self._cmc is None:
             l = []
             for x in self.mana_cost:
+                if 'X' in x:
+                    pass
                 try:
-                    l.append(int(x))
+                    l.append(int(x[1:-1])) # ignore the {}'s around the number
                 except Exception:
                     l.append(1)
 

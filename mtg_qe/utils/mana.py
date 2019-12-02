@@ -24,7 +24,7 @@ def alt_text_to_curly_bracket(text):
     Converts the text that appears in the alt attribute of image tags from gatherer
     to a curly-bracket mana notation.
     ex: 'Green'->{G}, 'Blue or Red'->{U/R}
-        'Variable Colorless' -> {X}
+        'Variable Colorless' -> {XC}
         'Colorless' -> {C}
         'N colorless' -> {N}, where N is some number
     """
@@ -52,8 +52,42 @@ def alt_text_to_curly_bracket(text):
         text = '/'.join([convert_color_to_letter(x) for x in text.split()])
 
     else:
+        text = f"{X if 'Variable' in text}{convert_color_to_letter(text.replace('Variable', '').strip())}"
+
         # hopefully all that's left is just simple color symbols.
         text = convert_color_to_letter(text)
 
     # at this point we've hopefully
     return f"{{{text}}}"
+
+def curly_bracket_to_img_link(cb):
+    """
+    Takes the curly-bracket notation for some mana type
+    and creates the appropriate image html tag.
+    """
+
+def fix_variable_mana(card):
+    """
+    This function was created to fix a problem in the dataset.
+    We're currently pretty up against the wall and I realized
+    that 'Variable' mana texts were not correctly converted to {X}
+    so this function is fed cards and corrects their mana values
+    if it detects this problem.
+    """
+    def correct_field(symbol):
+        if 'Variable' in symbol:
+            # strip out brackets:
+            symbol = symbol[1:-1]
+
+            # remove 'Variable'
+            symbol = symbol.replace('Variable', '').strip()
+
+            # get the correct color-letter
+            symbol = alt_text_to_curly_bracket(symbol)
+
+            # 'insert' X and return the corrected symbol.
+            return f'{{X{symbol[1:-1]}}}'
+        else:
+            return symbol
+    corrected = [x for x in card.mana_cost]
+    card.mana_cost = corrected
