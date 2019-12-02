@@ -25,6 +25,7 @@ if __name__ == "__main__":
                             'styles/*',
                             'js_scripts/*',
                             'images/*',
+                            'images/mana/*',
                             'fonts/*']
         },
         setup_requires=['wheel']
