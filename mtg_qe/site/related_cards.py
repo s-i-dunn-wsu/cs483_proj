@@ -51,9 +51,10 @@ def related_cards(name, amount):
     while (len(results) < amount) & (max > 0):
         if (len(sorted[max]) != 0):
             new_card = find_card_by_name(sorted[max].pop(random.choice(range(len(sorted[max])))))
-            # Disallow card being related to itself
-            if (new_card != find_card_by_name(name) and new_card.name not in ['Mountain', 'Island', 'Plains', 'Forest', 'Swamp']):
-                results.append(new_card)
+            if new_card is not None:
+                # Disallow card being related to itself
+                if (new_card != find_card_by_name(name) and new_card.name not in ['Mountain', 'Island', 'Plains', 'Forest', 'Swamp']):
+                    results.append(new_card)
         else:
             max -= 1
     return results
@@ -64,4 +65,4 @@ def related_decks(name, decks):
     return source.xpath('//div/h3/a/@href')[:decks]
 
 if __name__ == '__main__':
-    related_cards('Leyline of Anticipation', 5)
+    related_cards('The Great Henge', 5)
