@@ -56,6 +56,9 @@ class MTGSearch(object):
             params = json.loads(params['query'])
             print("Search parameters: " + str(params))
 
+        if not params:
+            raise cherrypy.HTTPRedirect("/advanced")
+
         # now we pass off to the query method:
         from ..data import advanced_query
         search_results = advanced_query(params, int(page) - 1, results)
