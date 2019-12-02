@@ -50,11 +50,14 @@ def related_cards(name, amount):
     # Get list of most common occurences
     while (len(results) < amount) & (max > 0):
         if (len(sorted[max]) != 0):
-            new_card = find_card_by_name(sorted[max].pop(random.choice(range(len(sorted[max])))))
+            new_card_name = sorted[max].pop(random.choice(range(len(sorted[max]))))
+            new_card = find_card_by_name(new_card_name)
             if new_card is not None:
                 # Disallow card being related to itself
                 if (new_card != find_card_by_name(name) and new_card.name not in ['Mountain', 'Island', 'Plains', 'Forest', 'Swamp']):
                     results.append(new_card)
+            else:
+                print('Card ' + new_card_name + ' does not exist.')
         else:
             max -= 1
     return results
