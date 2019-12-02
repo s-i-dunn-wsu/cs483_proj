@@ -39,21 +39,43 @@ class MTGSearch(object):
             'type': 'types',
             'subtype': 'subtypes',
             'format': 'legal_formats',
-
+            "expansions": "sets"
         }
 
         # now filter results, converting to the expected key if possible
         params = {conversions.get(k, k): v for k, v in params.items() if v}
 
         # now lets handle some special cases:
-        # 'color' may be in the parameters.
-        # if it is, we want to search for only cards of that color type:
-        # this will be cards with at least one matching mana symbol.
-        # so:
-        if 'color' in params:
-            required_color = params['color']
-            del params['color'] # remove 'color' field
-            params[required_color.lower()] = [1, -1] # advanced_query treats -1 as infinity ()
+        # mana options are a bit... awkward because the user may just want cards of a certain color identity
+        # or cards with mana symbols in a range. These cases are logically separate-ish to a user, but
+        # map to the same fields in our index, so we have to do a bit of data-dancing.
+        # if they want cards of a particular color identity `params` will have a 'is_<color>'
+        # (as 'on'). If they want cards in a particular range then there will be <color>_[to/from]
+        # in params.
+        # In the former case what we'll do is send a range '{1 TO }' to whoosh
+        # in the latter case (or if both are present as more-specific trumps general)
+        # we want to supply the correct range.
+        # Lastly: we perform essentially the same steps with power/toughness (we just don't care for 'is_[power/toughness])
+        # so to preserve DRY we'll just check for them in the same loop. the first 'if' block will never evaluate to true for
+        # these two fields, but the remaining clauses are fine.
+        for color in ('white', 'blue', 'red', 'black', 'green', 'power', 'toughness'):
+            # First check if 'is_{color}' is present.
+            key = f'is_{color}'
+            if key in params:
+                del params[key]
+                params[color] = [1, -1] # advanced_query treats -1 as infinity
+
+            # now check if '{color}_[from/to] is present, if so we want to override
+            # what we may have just done.
+            a, b = f'{color}_from', f'{color}_to'
+            if a in params or b in params:
+                params[color] = [int(params.get(a, -1)), int(params.get(b, -1))]
+
+            # now safely clean `a` and `b` out of params
+            if a in params:
+                del params[a]
+            if b in params:
+                del params[b]
 
         # now we pass off to the query method:
         from ..data import advanced_query

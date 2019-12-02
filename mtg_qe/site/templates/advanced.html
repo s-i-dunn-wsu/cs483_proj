@@ -8,6 +8,10 @@
             font-family: "Beleren Bold";
             src:url("fonts/BELEREN-BOLD.woff") format("woff");
         }
+        .form_content {
+            margin-left: 20%;
+            margin-right: 20%;
+        }
     </style>
     <script src="/scripts/sanitize_query_text.js"></script>
     <script src="/scripts/adv_search.js"></script>
@@ -20,80 +24,114 @@
         <input type="submit" value="Back to simple...">
     </form>
     <br/>
-
+    <div class="form_content">
     <form id="primaryForm" action="advanced_results" method="GET">
         <input type="submit" value="Search">
-        <table align="center">
-            <tr><td>
-            <br/>
-                <div align="left">Name:</div>
-            <br/>
-            <input class="searchbar" type="text" style="width:357px;" name="name" placeholder="Any">
-            </td></tr>
-            <tr><td>
-            <br/>
-                <div align="left">Rules Text:</div>
-            <br/>
-            <input class="searchbar" type="text" style="width:357px;" name="rules_text" placeholder="Any">
-            </td></tr>
-            <tr><td>
-            <br/>
-                <div align="left">Flavor Text:</div>
-            <br/>
-            <input class="searchbar" type="text" style="width:357px;" name="flavor_text" placeholder="Any">
-            </td></tr>
-            <tr><td>
-            <br/>
-                <div align="left">Expansion:</div>
-                <select name="expansions">
-                    <option value="">Any</option>
-                    {% for expansion in expansion_list %}
-                    <option value="{{ expansion }}">{{ expansion }}</option>
-                    {% endfor %}
-                </select>
-            </td></tr>
-            <tr><td>
-            <br/>
-                <div align="left">Set legality:</div>
-                <select name="format">
-                    <option value="">Any</option>
-                    {% for format in format_list %}
-                    <option value="{{ format }}">{{ format }}</option>
-                    {% endfor %}
-                </select>
-            </td></tr>
-            <tr><td>
-            <br/>
-                <div align="left">Card type:</div>
-                <select name="type">
+        <h3>Basic</h3>
+        <table>
+            <tr>
+                <td><div>Name:</div></td>
+                <td><input class="searchbar" type="text" style="width:357px;" name="name" placeholder="Any"></td>
+            </tr>
+            <tr>
+                <td><div align="left">Rules Text:</div></td>
+                <td><input class="searchbar" type="text" style="width:357px;" name="rules_text" placeholder="Any"></td>
+            </tr>
+            <tr>
+                <td><div align="left">Flavor Text:</div></td>
+                <td><input class="searchbar" type="text" style="width:357px;" name="flavor_text" placeholder="Any"></td>
+            </tr>
+        </table>
+        <h3>Mana</h3>
+        <table>
+            <tr>
+                <td><input type="checkbox" name="is_white">White</td>
+                <td><input type="checkbox" name="is_blue">Blue</td>
+                <td><input type="checkbox" name="is_red">Red</td>
+                <td><input type="checkbox" name="is_black">Black</td>
+                <td><input type="checkbox" name="is_green">Green</td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <td><div align="left">White:</div></td>
+                <td><input type="number" name="white_from" placeholder="from"></td>
+                <td><input type="number" name="white_to" placeholder="to"></td>
+            </tr>
+            <tr>
+                <td><div align="left">Blue:</div></td>
+                <td><input type="number" name="blue_from" placeholder="from"></td>
+                <td><input type="number" name="blue_to" placeholder="to"></td>
+            </tr>
+            <tr>
+                <td><div align="left">Red:</div></td>
+                <td><input type="number" name="red_from" placeholder="from"></td>
+                <td><input type="number" name="red_to" placeholder="to"></td>
+            </tr>
+            <tr>
+                <td><div align="left">Black:</div></td>
+                <td><input type="number" name="black_from" placeholder="from"></td>
+                <td><input type="number" name="black_to" placeholder="to"></td>
+            </tr>
+            <tr>
+                <td><div align="left">Green:</div></td>
+                <td><input type="number" name="green_from" placeholder="from"></td>
+                <td><input type="number" name="green_to" placeholder="to"></td>
+            </tr>
+        </table>
+        <h3>Card Details</h3>
+        <table>
+            <tr>
+                <td><div align="left">Card type:</div></td>
+                <td><select name="type" style="width:100%;">
                     <option value="">Any</option>
                     {% for type in type_list %}
                     <option value="{{ type }}">{{ type }}</option>
                     {% endfor %}
-                </select>
-            </td></tr>
-            <tr><td>
-            <br/>
-                <div align="left">Subtype(s):</div>
-            <br/>
-            <input class="searchbar" type="text" style="width:357px;" name="subtype" placeholder="Any">
-            </td></tr>
-            <tr><td>
-            <br/>
-                <div align="left">Color:</div>
-            <br/>
-            <div align="left"><select name="color">
-            <option value="">Any</option>
-            <option value="White">White</option>
-            <option value="Blue">Blue</option>
-            <option value="Black">Black</option>
-            <option value="Red">Red</option>
-            <option value="Green">Green</option>
-            <option value="Colorless">Colorless</option>
-            </select></div>
-            </td></tr>
+                </select></td>
+            </tr>
+
+            <tr>
+                <td><div align="left">Subtype(s):</div></td>
+                <td><input class="searchbar" type="text" style="width:357px;" name="subtype" placeholder="Any"></td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <td><div align="left">Power:</div></td>
+                <td><input type="number" name="power_from" placeholder="from"></td>
+                <td><input type="number" name="power_to" placeholder="to"></td>
+            </tr>
+            <tr>
+                <td><div align="left">Toughness:</div></td>
+                <td><input type="number" name="toughness_from" placeholder="from"></td>
+                <td><input type="number" name="toughness_to" placeholder="to"></td>
+            </tr>
+        </table>
+        <h3>Publication Information</h3>
+        <table>
+            <tr>
+                    <td><div align="left">Expansion:</div></td>
+                    <td><select name="expansions" style="width:100%;">
+                        <option value="">Any</option>
+                        {% for expansion in expansion_list %}
+                        <option value="{{ expansion }}">{{ expansion }}</option>
+                        {% endfor %}
+                    </select></td>
+                </tr>
+
+                <tr>
+                    <td><div align="left">Set legality:</div></td>
+                    <td><select name="format" style="width:100%;">
+                        <option value="">Any</option>
+                        {% for format in format_list %}
+                        <option value="{{ format }}">{{ format }}</option>
+                        {% endfor %}
+                    </select></td>
+                </tr>
         </table>
         <input type="submit" value="Search">
     </form>
+    </div>
 </body>
 </html>
