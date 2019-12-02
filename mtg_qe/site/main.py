@@ -1,6 +1,7 @@
 import os
 import cherrypy
 from .related_cards import related_cards
+from ..utils.mana import replace_curly_brackets_in_text, curly_bracket_to_img_link
 from jinja2 import Environment, FileSystemLoader
 import json
 
@@ -74,7 +75,8 @@ class MTGSearch(object):
         template = self.env.get_template('advanced_results.html')
         return template.render(searchquery=json.dumps(params), result=search_results,
                                pagenum=page, resultsnum=results, lastpage=1 if last_page else 0,
-                               art_locator=self._locate_art_for_card)
+                               art_locator=self._locate_art_for_card,
+                               mana_symbol_fixer=replace_curly_brackets_in_text)
 
 
     @cherrypy.expose
@@ -104,7 +106,8 @@ class MTGSearch(object):
         template = self.env.get_template('results.html')
         return template.render(searchquery=query, result=data,
                                pagenum=page_num, resultsnum=results_num,
-                               lastpage=last, art_locator=self._locate_art_for_card)
+                               lastpage=last, art_locator=self._locate_art_for_card,
+                               mana_symbol_fixer=replace_curly_brackets_in_text)
 
 
     @cherrypy.expose
@@ -123,7 +126,15 @@ class MTGSearch(object):
 
         related = related_cards(card.name, 10)
 
-        return template.render(id=cardid, carddata=card, relatedcards=related, artwork=self._locate_art_for_card(card))
+        # prep some fields that need some processing
+        mana_cost = None if card.mana_cost is None else "".join([curly_bracket_to_img_link(x) for x in card.mana_cost])
+        rules_text = None if card.text is None else replace_curly_brackets_in_text(card.text)
+
+        return template.render(id=cardid, carddata=card,
+                                relatedcards=related,
+                                artwork=self._locate_art_for_card(card),
+                                mana_cost = mana_cost,
+                                rules_text = rules_text)
 
     def _locate_art_for_card(self, card):
         """

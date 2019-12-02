@@ -30,7 +30,7 @@ td {
                     </tr>
                     <tr>
                         <td><b>Mana Cost:</b></td>
-                        <td>{{ carddata.mana_cost }}</td>
+                        <td>{{ mana_cost }}</td>
                     </tr>
                     <tr>
                         <td><b>Type Info:</b></td>
@@ -48,10 +48,10 @@ td {
                         <td>{{ carddata.power }} / {{ carddata.toughness }}</td>
                     </tr>
                 {% endif %}
-                {% if carddata.text %}
+                {% if rules_text %}
                     <tr>
                         <td><b>Card Rules Text:</b></td>
-                        <td>{{ carddata.text.replace('\n', '<br>') }}</td>
+                        <td>{{ rules_text.replace('\n', '<br>') }}</td>
                     </tr>
                 {% endif %}
                 {% if carddata.flavor %}

@@ -52,19 +52,32 @@ def alt_text_to_curly_bracket(text):
         text = '/'.join([convert_color_to_letter(x) for x in text.split()])
 
     else:
-        text = f"{X if 'Variable' in text}{convert_color_to_letter(text.replace('Variable', '').strip())}"
-
-        # hopefully all that's left is just simple color symbols.
-        text = convert_color_to_letter(text)
+        if 'Variable' in text:
+            text = 'X'
+        else:
+            # hopefully all that's left is just simple color symbols.
+            text = convert_color_to_letter(text)
 
     # at this point we've hopefully
     return f"{{{text}}}"
+
+def replace_curly_brackets_in_text(text):
+    """
+    Replaces curly bracket notation in text with the correct
+    image link.
+    """
+    sub_aux = lambda match: curly_bracket_to_img_link(match.group(1))
+    pattern = r'(\{.*?\})'
+    return re.sub(pattern, sub_aux, text)
 
 def curly_bracket_to_img_link(cb):
     """
     Takes the curly-bracket notation for some mana type
     and creates the appropriate image html tag.
     """
+    file_safe_name = cb[1:-1].replace('/', '_').replace(' ', '_')
+    ext = 'png' if 'Phyrexian' in file_safe_name or file_safe_name in ('C', 'E') else 'gif'
+    return f"<img src=\"/images/mana/{file_safe_name}.{ext}\">"
 
 def fix_variable_mana(card):
     """

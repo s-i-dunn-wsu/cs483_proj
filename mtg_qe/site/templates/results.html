@@ -44,10 +44,10 @@
 </tr>
 {% for card in result %}
 <tr>
-<td><a href="/cardinfo?cardid={{ card.multiverseid }}"><img src="{{ art_locator(card) }}"></a></td>
+<td><a href="/cardinfo?cardid={{ card.multiverseid }}"><img class="card_image" src="{{ art_locator(card) }}"></a></td>
 <td valign="top">
 <h3><a href="/cardinfo?cardid={{ card.multiverseid }}">{{ card.name }}</a></h3><br/>
-{{ card.text }}
+{{ mana_symbol_fixer(card.text) }}
 </td>
 </tr>
 {% endfor %}

@@ -17,7 +17,7 @@ table {
     border-spacing: 10px;
     width: 75%;
 }
-img {
+.card_image {
     height: 175px;
 }
 div.results {
