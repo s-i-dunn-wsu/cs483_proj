@@ -93,6 +93,11 @@ def simple_query(query, or_group=False, page = 0, n = 10):
     :return: Exact class TBD, will provide way to iterate over the page's worth of results.
     """
     ix = get_whoosh_index()
+
+    # fix `page` and `n` (they may be string versions of ints)
+    page = int(page)
+    n = int(n)
+
     # parse against the main text fields (note: subtypes is here to help aid in "tribe" searches, and boost planeswalker results)
     qparser = MultifieldParser(['rules_text', 'name', 'flavor_text', 'subtypes'], ix.schema, group = OrGroup if or_group else AndGroup)
 
@@ -120,6 +125,11 @@ def advanced_query(parameters, page = 0, n = 10):
     :return: Exact class TBD, will provide way to iterate over the page's worth of results.
     """
     schema = get_whoosh_index().schema
+
+    # fix `page` and `n` (they may be string versions of ints)
+    page = int(page)
+    n = int(n)
+
 
     # After talking with Ben it sounds like we can do something to the effect
     # of taking multiple sub queries and perform unions and intersections on their
@@ -156,7 +166,11 @@ def advanced_query(parameters, page = 0, n = 10):
 
     with get_whoosh_index().searcher() as searcher:
         # run that query and return the appropriate results page.
-        results = searcher.search_page(query, page+1, n)
+        try:
+            results = searcher.search_page(query, page+1, n)
+        except Exception:
+            print(repr(query))
+            raise
 
         return [x['data_obj'] for x in results]
 

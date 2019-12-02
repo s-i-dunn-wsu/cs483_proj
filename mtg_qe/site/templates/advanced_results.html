@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="styles/results.css">
+        <style>
+            @font-face {
+                font-family: "Beleren Bold";
+                src:url("fonts/BELEREN-BOLD.woff") format("woff");
+            }
+        </style>
+        <script src="/scripts/sanitize_query_text.js"></script>
+        <script src="/scripts/simple_input.js"></script>
+    </head>
+    <body onload="applySimpleInputSanitizer()">
+    <h1><a href="/">Magic: The Gathering Card Search</a></h1>
+    <form id="searchForm" action="results" method="GET">
+    <input id = "searchInput" class="searchbar" type="text" name="query" type="text" value="{{ query }}">
+    <input type="submit" value="Search">
+    </form>
+    <br/>
+    <br/>
+    {% if pagenum != 1 %}
+    <form action="advanced_results" method="GET">
+    <input type="submit" value="<">
+    <input type="hidden" name="query" value='{{ searchquery }}'>
+    <input type="hidden" name="decode" value="True">
+    <input type="hidden" name="page" value="{{ pagenum - 1 }}">
+    <input type="hidden" name="results" value="{{ resultsnum }}">
+    </form>
+    {% endif %}
+    {{ pagenum }}
+    {% if lastpage == 0 %}
+    <form action="advanced_results" method="GET">
+    <input type="submit" value=">">
+    <input type="hidden" name="query" value='{{ searchquery }}'>
+    <input type="hidden" name="decode" value="True">
+    <input type="hidden" name="page" value="{{ pagenum + 1 }}">
+    <input type="hidden" name="results" value="{{ resultsnum }}">
+    </form>
+    {% endif %}
+    <br/>
+    <div class="results">
+    <table align="center">
+    <tr>
+    <th colspan="2"><h3>Results for "{{ searchquery }}"...</h3></th>
+    </tr>
+    {% for card in result %}
+    <tr>
+    <td><a href="/cardinfo?cardid={{ card.multiverseid }}"><img src="https://gatherer.wizards.com{{ card.external_artwork }}"></a></td>
+    <td valign="top">
+    <h3><a href="/cardinfo?cardid={{ card.multiverseid }}">{{ card.name }}</a></h3><br/>
+    {{ card.text }}
+    </td>
+    </tr>
+    {% endfor %}
+    </table>
+    </div>
+    <br/>
+    {% if pagenum != 1 %}
+    <form action="results" method="GET">
+    <input type="submit" value="<">
+    <input type="hidden" name="query" value='{{ searchquery }}'>
+    <input type="hidden" name="page" value="{{ pagenum - 1 }}">
+    <input type="hidden" name="results" value="{{ resultsnum }}">
+    </form>
+    {% endif %}
+    {{ pagenum }}
+    {% if lastpage == 0 %}
+    <form action="results" method="GET">
+    <input type="submit" value=">">
+    <input type="hidden" name="query" value='{{ searchquery }}'>
+    <input type="hidden" name="page" value="{{ pagenum + 1 }}">
+    <input type="hidden" name="results" value="{{ resultsnum }}">
+    </form>
+    {% endif %}
+    <br/>
+    <br/>
+    <br/>
+    </body>
+</html>
