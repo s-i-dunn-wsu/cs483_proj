@@ -15,9 +15,10 @@ def replace_mana_links_in_text(text):
     """
     This function takes an input string - likely from gatherer itself - and converts mana symbol-tags to curly-bracket notation
     """
-    sub_aux = lambda match: alt_text_to_curly_bracket(match.group(1))
-    pattern = r'<\s*img\s.*?alt="(.*?)".*?>'
-    return re.sub(pattern, sub_aux, text)
+    if text:
+        sub_aux = lambda match: alt_text_to_curly_bracket(match.group(1))
+        pattern = r'<\s*img\s.*?alt="(.*?)".*?>'
+        return re.sub(pattern, sub_aux, text)
 
 def alt_text_to_curly_bracket(text):
     """
@@ -66,9 +67,10 @@ def replace_curly_brackets_in_text(text):
     Replaces curly bracket notation in text with the correct
     image link.
     """
-    sub_aux = lambda match: curly_bracket_to_img_link(match.group(1))
-    pattern = r'(\{.*?\})'
-    return re.sub(pattern, sub_aux, text)
+    if text:
+        sub_aux = lambda match: curly_bracket_to_img_link(match.group(1))
+        pattern = r'(\{.*?\})'
+        return re.sub(pattern, sub_aux, text)
 
 def curly_bracket_to_img_link(cb):
     """
