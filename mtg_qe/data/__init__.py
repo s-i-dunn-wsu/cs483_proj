@@ -124,12 +124,13 @@ def advanced_query(parameters, page = 0, n = 10):
     :param int n: the number of results per page.
     :return: Exact class TBD, will provide way to iterate over the page's worth of results.
     """
+    import whoosh.fields
+    from whoosh.query import And, Or
     schema = get_whoosh_index().schema
 
     # fix `page` and `n` (they may be string versions of ints)
     page = int(page)
     n = int(n)
-
 
     # After talking with Ben it sounds like we can do something to the effect
     # of taking multiple sub queries and perform unions and intersections on their
@@ -143,8 +144,9 @@ def advanced_query(parameters, page = 0, n = 10):
         if isinstance(target, float):
             target = int(target+0.5)
         if isinstance(target, int):
-            target = f"{{{target-1} TO {target+1}}}"
-            target = target.replace("[ TO", "[TO").replace("TO ]", "TO]")
+            target = str(target)
+            #target = f"{{{target-1} TO {target+1}}}"
+            #target = target.replace("[ TO", "[TO").replace("TO ]", "TO]")
 
         # Coerce range queries to whoosh syntax, assume they're inclusive bounds.
         if isinstance(target, (list, tuple)):
@@ -155,15 +157,24 @@ def advanced_query(parameters, page = 0, n = 10):
             # whoosh has issues if there's an open ended range with a space separating TO from the bracket:
             target = target.replace("[ TO", "[TO").replace("TO ]", "TO]")
 
-        query_objs.append(QueryParser(field, schema).parse(target.lower())) # again, lower capitalization on everything
+        # the comma-separated KEYWORD fields have been giving us some issue
+        # it seems that whoosh is a bit bi-polar when it comes to commas in these fields.
+        # so we'll add two subqueries, one with a comma and one without.
+        if field in schema and isinstance(schema[field], whoosh.fields.KEYWORD):
+            # add the extra query object:
+            subqueries = [QueryParser(field, schema).parse(target.lower()+','),
+                          QueryParser(field, schema).parse(target.lower())]
+            query_objs.append(Or(subqueries))
+
+        else:
+            query_objs.append(QueryParser(field, schema).parse(target.lower())) # again, lower capitalization on everything
 
     if not len(query_objs):
         return []
 
     # now build a nice big compound query:
-    from whoosh.query import And
     query = And(query_objs)
-
+    print(repr(query))
     with get_whoosh_index().searcher() as searcher:
         # run that query and return the appropriate results page.
         try:
