@@ -174,7 +174,6 @@ def advanced_query(parameters, page = 0, n = 10):
 
     # now build a nice big compound query:
     query = And(query_objs)
-    print(repr(query))
     with get_whoosh_index().searcher() as searcher:
         # run that query and return the appropriate results page.
         try:

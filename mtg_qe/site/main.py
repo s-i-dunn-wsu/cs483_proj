@@ -47,15 +47,11 @@ class MTGSearch(object):
         results = int(results)
 
         if decode == False:
-            print("tweaking stuff")
             params = self._tweak_adv_params(params)
-            print(params)
-
 
         else:
             # get the serialized query from params:
             params = json.loads(params['query'])
-            print("Search parameters: " + str(params))
 
         if not params:
             raise cherrypy.HTTPRedirect("/advanced")
