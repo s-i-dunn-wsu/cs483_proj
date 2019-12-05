@@ -5,10 +5,10 @@ if __name__ == "__main__":
 
     setup(
         name="mtg_qe",
-        version="0.1.1",
+        version="1.0.1",
         author="Noah Scarbrough, Samuel Dunn",
-        author_email="samuel.i.dunn@wsu.edu",
-        description="magic the gathering card search, for CS483",
+        author_email="samuel.i.dunn@wsu.edu, noah.scarbrough@wsu.edu",
+        description="magic the gathering card search, for CS483-Web Data",
         packages=find_packages(),
         install_requires=['whoosh', 'cherrypy', 'jinja2', 'lxml', 'requests'],
         entry_points={
