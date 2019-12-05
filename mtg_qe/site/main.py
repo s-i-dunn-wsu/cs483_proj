@@ -66,11 +66,15 @@ class MTGSearch(object):
 
         # Check if this is the last page by comparing the first entry on this page to the first on the next.
         last_page = search_results[0].multiverseid == advanced_query(params, int(page), results)[0].multiverseid
+            
+        next_pages = 0
+        while advanced_query(params, int(page) + next_pages - 1, results)[0].multiverseid != advanced_query(params, int(page) + next_pages, results)[0].multiverseid and next_pages < 3:
+            next_pages += 1
 
         # inflate and return the template.
         template = self.env.get_template('advanced_results.html')
         return template.render(searchquery=json.dumps(params), result=search_results,
-                               pagenum=page, resultsnum=results, lastpage=1 if last_page else 0,
+                               pagenum=page, resultsnum=results, lastpage=1 if last_page else 0, nextpages = next_pages,
                                art_locator=self._locate_art_for_card,
                                mana_symbol_fixer=replace_curly_brackets_in_text)
 
@@ -97,12 +101,16 @@ class MTGSearch(object):
         last = 0
         if (data[0].multiverseid == simple_query(query, False, page_num, results_num)[0].multiverseid):
             last = 1
+            
+        next_pages = 0
+        while simple_query(query, False, page_num + next_pages - 1, results_num)[0].multiverseid != simple_query(query, False, page_num + next_pages, results_num)[0].multiverseid and next_pages < 3:
+            next_pages += 1
 
         # incorperate results into template
         template = self.env.get_template('results.html')
         return template.render(searchquery=query, result=data,
                                pagenum=page_num, resultsnum=results_num,
-                               lastpage=last, art_locator=self._locate_art_for_card,
+                               lastpage=last, nextpages = next_pages, art_locator=self._locate_art_for_card,
                                mana_symbol_fixer=replace_curly_brackets_in_text)
 
 

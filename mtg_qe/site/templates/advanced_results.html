@@ -23,7 +23,27 @@
     <input type="hidden" name="results" value="{{ resultsnum }}">
     </form>
     {% endif %}
-    {{ pagenum }}
+    {% for page in range(3) %}
+    {% if pagenum - 3 + page > 0 %}
+    <form action="advanced_results" method="GET">
+    <input type="submit" value="{{ pagenum - 3 + page }}">
+    <input type="hidden" name="query" value='{{ searchquery }}'>
+    <input type="hidden" name="decode" value="True">
+    <input type="hidden" name="page" value="{{ pagenum - 3 + page }}">
+    <input type="hidden" name="results" value="{{ resultsnum }}">
+    </form>
+    {% endif %}
+    {% endfor %}
+    <input type="submit" value="Page {{ pagenum }}">
+    {% for page in range(nextpages) %}
+    <form action="advanced_results" method="GET">
+    <input type="submit" value="{{ pagenum + page + 1 }}">
+    <input type="hidden" name="query" value='{{ searchquery }}'>
+    <input type="hidden" name="decode" value="True">
+    <input type="hidden" name="page" value="{{ pagenum + page + 1 }}">
+    <input type="hidden" name="results" value="{{ resultsnum }}">
+    </form>
+    {% endfor %}
     {% if lastpage == 0 %}
     <form action="advanced_results" method="GET">
     <input type="submit" value=">">
@@ -62,7 +82,27 @@
     <input type="hidden" name="results" value="{{ resultsnum }}">
     </form>
     {% endif %}
-    {{ pagenum }}
+    {% for page in range(3) %}
+    {% if pagenum - 3 + page > 0 %}
+    <form action="advanced_results" method="GET">
+    <input type="submit" value="{{ pagenum - 3 + page }}">
+    <input type="hidden" name="query" value='{{ searchquery }}'>
+    <input type="hidden" name="decode" value="True">
+    <input type="hidden" name="page" value="{{ pagenum - 3 + page }}">
+    <input type="hidden" name="results" value="{{ resultsnum }}">
+    </form>
+    {% endif %}
+    {% endfor %}
+    <input type="submit" value="Page {{ pagenum }}">
+    {% for page in range(nextpages) %}
+    <form action="advanced_results" method="GET">
+    <input type="submit" value="{{ pagenum + page + 1 }}">
+    <input type="hidden" name="query" value='{{ searchquery }}'>
+    <input type="hidden" name="decode" value="True">
+    <input type="hidden" name="page" value="{{ pagenum + page + 1 }}">
+    <input type="hidden" name="results" value="{{ resultsnum }}">
+    </form>
+    {% endfor %}
     {% if lastpage == 0 %}
     <form action="advanced_results" method="GET">
     <input type="submit" value=">">
