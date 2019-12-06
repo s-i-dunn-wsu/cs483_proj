@@ -31,6 +31,13 @@ There is also `launch_site.py`, which will start the cherrypy session to host th
 Once invoked, our website will be hosted on localhost, port 8080 (currently only serving to itself, not on `0.0.0.0` or any other network interface).
 
 Once up, use a browser to navigate to `localhost:8080` or `127.0.0.1:8080`
+If you would like to change this then you need only add the line:
+
+```Python
+cherrypy.config.update({'server.socket_host': '0.0.0.0'})
+```
+
+before the call to `cherrypy.quickstart` in `mtg_qe/site/main.py`.
 
 ### Other files
 Here in the top level directory there are two other files of note.
@@ -53,7 +60,6 @@ Note: you will need to move the corpus archive to `mtg_qe/data/` before using se
 `requirements.txt` defines the packages needed to run all components of the project.
 Before attempting to use anything, we recommend setting up a virtual environment and installing its contents:
 `pip install -r requirements.txt`
-
 
 ## Submission compliance notes
 
