@@ -18,8 +18,14 @@ Within the `mtg_qe/` folder are subfolders that define specific components of th
 
 ### Helper scripts
 
-In the top level directory there are two helper scripts.
+In the top level directory there are three helper scripts.
+
 The first is `run_scrape.py` which, true to its name, initiates a scraping sequence. It will be a go-to script in most developer environments.
+This script has a command line interface help option to better describe its functionality.
+After running it will output a scrape data archive (specified by the user), this can then be used with the next script.
+
+`transform_data.py` will take the scraper output and build the indexes out of it.
+Again, this script has commandline help options for a better description.
 
 There is also `launch_site.py`, which will start the cherrypy session to host the website.
 Once invoked, our website will be hosted on localhost, port 8080 (currently only serving to itself, not on `0.0.0.0` or any other network interface).
