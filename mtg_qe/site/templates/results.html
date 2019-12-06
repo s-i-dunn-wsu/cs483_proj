@@ -19,6 +19,14 @@
 </form>
 <br/>
 <br/>
+{% if pagenum > 2 %}
+<form action="results" method="GET">
+<input type="submit" value="<<">
+<input type="hidden" name="query" value="{{ searchquery }}">
+<input type="hidden" name="page" value="1">
+<input type="hidden" name="results" value="{{ resultsnum }}">
+</form>
+{% endif %}
 {% if pagenum != 1 %}
 <form action="results" method="GET">
 <input type="submit" value="<">
@@ -27,23 +35,12 @@
 <input type="hidden" name="results" value="{{ resultsnum }}">
 </form>
 {% endif %}
-{% if pagenum > 3 %}
+{% for page in range(3) %}
+{% if pagenum - 3 + page > 0 %}
 <form action="results" method="GET">
-<input type="submit" value="1">
+<input type="submit" value="{{ pagenum - 3 + page }}">
 <input type="hidden" name="query" value="{{ searchquery }}">
-<input type="hidden" name="page" value="1">
-<input type="hidden" name="results" value="{{ resultsnum }}">
-</form>
-{% if pagenum > 4 %}
-<input type="submit" value="...">
-{% endif %}
-{% endif %}
-{% for page in range(2) %}
-{% if pagenum - 2 + page > 0 %}
-<form action="results" method="GET">
-<input type="submit" value="{{ pagenum - 2 + page }}">
-<input type="hidden" name="query" value="{{ searchquery }}">
-<input type="hidden" name="page" value="{{ pagenum - 2 + page }}">
+<input type="hidden" name="page" value="{{ pagenum - 3 + page }}">
 <input type="hidden" name="results" value="{{ resultsnum }}">
 </form>
 {% endif %}
@@ -85,6 +82,14 @@
 </table>
 </div>
 <br/>
+{% if pagenum > 2 %}
+<form action="results" method="GET">
+<input type="submit" value="<<">
+<input type="hidden" name="query" value="{{ searchquery }}">
+<input type="hidden" name="page" value="1">
+<input type="hidden" name="results" value="{{ resultsnum }}">
+</form>
+{% endif %}
 {% if pagenum != 1 %}
 <form action="results" method="GET">
 <input type="submit" value="<">
@@ -93,23 +98,12 @@
 <input type="hidden" name="results" value="{{ resultsnum }}">
 </form>
 {% endif %}
-{% if pagenum > 3 %}
+{% for page in range(3) %}
+{% if pagenum - 3 + page > 0 %}
 <form action="results" method="GET">
-<input type="submit" value="1">
+<input type="submit" value="{{ pagenum - 3 + page }}">
 <input type="hidden" name="query" value="{{ searchquery }}">
-<input type="hidden" name="page" value="1">
-<input type="hidden" name="results" value="{{ resultsnum }}">
-</form>
-{% if pagenum > 4 %}
-<input type="submit" value="...">
-{% endif %}
-{% endif %}
-{% for page in range(2) %}
-{% if pagenum - 2 + page > 0 %}
-<form action="results" method="GET">
-<input type="submit" value="{{ pagenum - 2 + page }}">
-<input type="hidden" name="query" value="{{ searchquery }}">
-<input type="hidden" name="page" value="{{ pagenum - 2 + page }}">
+<input type="hidden" name="page" value="{{ pagenum - 3 + page }}">
 <input type="hidden" name="results" value="{{ resultsnum }}">
 </form>
 {% endif %}
