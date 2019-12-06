@@ -66,3 +66,6 @@ Before attempting to use anything, we recommend setting up a virtual environment
 the Whoosh~ index is located within `corpus_v4.5_lite.tar.gz`. When extracted its located in `corpus_files/whoosh_index`. (`mtg_qe/data/corpus_files_whoosh_index` if extracted by system (and you moved the .tar.gz there)).
 
 The scrape dataset is... large. The image data is like 2.2 gigabytes. As such I didn't include the images with the submisison. Instead I've included `scrape_data_no_art.tar.gz`.  It should work with `transform_data.py`, but I haven't actually tested it.
+
+To navigate to the site once up:
+`http://localhost:8080`
