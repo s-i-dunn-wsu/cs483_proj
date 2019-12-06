@@ -45,6 +45,7 @@ This will bundle everything into a `.whl` which `pip` can use to install the pac
 
 Additionally, there is a file `corpus_v4.5_lite.tar.gz`.
 This archive contains our indexes. To use it, it needs to be moved to `mtg_qe/data/`, where it will be automatically unpacked and used.
+Note: this dataset is 'lite' because it omits image data. In the absense of image data, the website will link images to the host site. (gatherer.wizards.com)
 
 Note: you will need to move the corpus archive to `mtg_qe/data/` before using setup.py, otherwise the generated `.whl` will be incomplete and will have issues at destination.
 
