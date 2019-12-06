@@ -47,3 +47,8 @@ Additionally, there is a file `corpus_v4.5_lite.tar.gz`.
 This archive contains our indexes. To use it, it needs to be moved to `mtg_qe/data/`, where it will be automatically unpacked and used.
 
 Note: you will need to move the corpus archive to `mtg_qe/data/` before using setup.py, otherwise the generated `.whl` will be incomplete and will have issues at destination.
+
+
+`requirements.txt` defines the packages needed to run all components of the project.
+Before attempting to use anything, we recommend setting up a virtual environment and installing its contents:
+`pip install -r requirements.txt`
