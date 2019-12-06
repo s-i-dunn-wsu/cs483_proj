@@ -1,3 +1,6 @@
+# Noah Scarbrough, Samuel Dunn
+# CS 483, Fall 2019
+
 import os
 import cherrypy
 from .related_cards import related_cards
@@ -66,7 +69,7 @@ class MTGSearch(object):
 
         # Check if this is the last page by comparing the first entry on this page to the first on the next.
         last_page = search_results[0].multiverseid == advanced_query(params, int(page), results)[0].multiverseid
-            
+
         next_pages = 0
         while advanced_query(params, int(page) + next_pages - 1, results)[0].multiverseid != advanced_query(params, int(page) + next_pages, results)[0].multiverseid and next_pages < 3:
             next_pages += 1
@@ -101,7 +104,7 @@ class MTGSearch(object):
         last = 0
         if (data[0].multiverseid == simple_query(query, False, page_num, results_num)[0].multiverseid):
             last = 1
-            
+
         next_pages = 0
         while simple_query(query, False, page_num + next_pages - 1, results_num)[0].multiverseid != simple_query(query, False, page_num + next_pages, results_num)[0].multiverseid and next_pages < 3:
             next_pages += 1
