@@ -1,3 +1,7 @@
+# Samuel Dunn
+# CS 483, Fall 2019
+# This script builds the .whl redistributable for the project.
+
 from setuptools import find_packages, setup
 import os
 
