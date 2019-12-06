@@ -17,6 +17,7 @@ def related_cards(name, amount):
     all_related = []
     counted = []
     max = 1
+    # Retrieves top 3 decks
     paths = related_decks(name, 3)
     results = []
     sorted = [[]]
@@ -26,6 +27,7 @@ def related_cards(name, amount):
     for path in paths:
         deck_name = path.split('/')[len(path.split('/')) - 2]
         local_path = os.path.dirname(__file__) + '/../data/related_cache/' + deck_name + '.html'
+        # Check if deck is cached
         if os.path.exists(local_path):
             print('Cache exists')
             f = open(local_path)
@@ -33,6 +35,7 @@ def related_cards(name, amount):
             f.close()
         else:
             print('Cache does not exist')
+            # Handle the case where tappedout is down
             try:
                 source = get_html(site + path)
             except requests.exceptions.ConnectionError:
