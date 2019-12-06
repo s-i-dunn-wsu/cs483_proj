@@ -14,7 +14,7 @@ stime = time.strftime("%a%d%m%Y-%H%M")
 logging.basicConfig(level=logging.INFO, filename=f'scrape_{stime}.log')
 
 # Uncomment to print logging info to stdout.
-#logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
+logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
 
 if __name__ == "__main__":
 	cli_entry()
