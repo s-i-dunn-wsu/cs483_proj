@@ -11,6 +11,10 @@ def normalize_name(name):
     equivalent to name, can be used for sets or cards.
     :param str name: the name of a set.
     :return: a normalized, path-safe, equivalent.
+
+    .. warning::
+        The returned value is not ensured to be valid under Windows file systems
+
     """
     return re.sub(r'\s+|\\|/|\[|\]', '_', name)
 
