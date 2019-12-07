@@ -84,9 +84,6 @@ class IndexInitializer(object):
             self._log.info(f'Updating index with contents of {os.path.basename(set_file)}')
             for serialized_data in set_data:
                 card = Card().deserialize(serialized_data)
-                # We're up against the wall, and need to fix the current scrape set with out a rescrape.
-                # this function fixes the current-known mana issue.
-                fix_variable_mana(card)
 
                 if card.name not in cards_by_name:
                     # precompute some things, this makes the whoosh_writer.add_doc call somewhat cleaner
