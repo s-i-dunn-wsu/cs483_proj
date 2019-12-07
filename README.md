@@ -28,15 +28,12 @@ After running it will output a scrape data archive (specified by the user), this
 Again, this script has commandline help options for a better description.
 
 There is also `launch_site.py`, which will start the cherrypy session to host the website.
-Once invoked, our website will be hosted on localhost, port 8080 (currently only serving to itself, not on `0.0.0.0` or any other network interface).
+Once invoked, our website will be hosted on localhost, port 8080 by default
 
 Once up, use a browser to navigate to `localhost:8080` or `127.0.0.1:8080`
-If you would like to change this then you need only add the line:
 
-```Python
-cherrypy.config.update({'server.socket_host': '0.0.0.0'})
-```
-
+If you need to change the serving configuration `launch_site.py` has two commandline options for specifying which interface to serve on and which port.
+(Note: to serve on all interfaces use `'0.0.0.0'`, to serve on a specific interface, use the IP address your machine has for that interface.)
 
 Each of these scripts correspond to functionality provided when the package is installed.
 When pip installs the .whl file, it creates some scripts and places them on $PATH.

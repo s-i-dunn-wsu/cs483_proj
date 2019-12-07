@@ -217,6 +217,14 @@ class MTGSearch(object):
 
 
 def main():
+    from argparse import ArgumentParser
+
+    parser = ArgumentParser('mtg_qe')
+    parser.add_argument('-p', '--port', type=int, default=None, help="Specifies the port to run mtg_qe server on. Note: if you pick a protected port, you'll need to use super user permissions. Defaults to 8080")
+    parser.add_argument('-i', '--interface', type=str, default=None, help="Specifies the socket host, or interface, to run on. Defaults to 127.0.0.1 (only serves to yourself)")
+
+    args = parser.parse_args()
+
     from ..data import get_data_location
     here = os.path.dirname(os.path.abspath(__file__))
     old = os.getcwd()
@@ -244,6 +252,11 @@ def main():
             "tools.staticdir.dir": os.path.join(get_data_location(), 'artwork')
         }
     }
+
+    if args.port:
+        cherrypy.config.update({'server.socket_port': args.port})
+    if args.interface:
+        cherrypy.config.update({'server.socket_host': args.interface})
 
     try:
         cherrypy.quickstart(MTGSearch(env), '/', conf)
