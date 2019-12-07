@@ -37,6 +37,25 @@ If you would like to change this then you need only add the line:
 cherrypy.config.update({'server.socket_host': '0.0.0.0'})
 ```
 
+
+Each of these scripts correspond to functionality provided when the package is installed.
+When pip installs the .whl file, it creates some scripts and places them on $PATH.
+
+- `mtg_qe` will launch the site (corresponds to `launch_site.py`)
+- `mtg_qe_scrape` will run the scraper (corresponds to `run_scrape.py`)
+- `mtg_qe_setup_index` will build the indexes from scrape data (`transorm_data.py`)
+
+There currently isn't a way to install a fresh dataset via a command (Low priority feature that wasn't really ever needed). To take a fresh corpus-dataset, just locate the packages installation directory (import mtg_qe from an interactive pythonsection and print it.)
+
+```Python
+import mtg_qe
+print(mtg_qe)
+# prints the location, should be nested somewhere in your venv/python installation
+```
+
+and then copy the corpus files .tar.gz to the mtg_qe/data folder
+Note: it must end with .tar.gz and it must be the only .tar.gz there.  Delete or rename the `corpus_files` directory that's there (if its there). This will cause the *next* runtime to unpack the new dataset.
+
 before the call to `cherrypy.quickstart` in `mtg_qe/site/main.py`.
 
 ### Other files
